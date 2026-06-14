@@ -6,13 +6,14 @@ type GalleryProps = {
   actionLabel?: string;
 };
 
+const PHOTOS = [
+  { id: 1, src: "/images/gallery-1.png", alt: "Active happy customer in safari hat" },
+  { id: 2, src: "/images/gallery-2.png", alt: "Happy toddler drinking clear water" },
+  { id: 3, src: "/images/gallery-3.png", alt: "Pregnant woman enjoying fresh water" },
+  { id: 4, src: "/images/gallery-4.png", alt: "Healthy runner drinking from bottle" },
+];
+
 export default function Gallery({ title = "Our people are happy", actionLabel = "Follow Us" }: GalleryProps) {
-  const photos = [
-    { id: 1, src: "/images/gallery-1.png", alt: "Active happy customer in safari hat" },
-    { id: 2, src: "/images/gallery-2.png", alt: "Happy toddler drinking clear water" },
-    { id: 3, src: "/images/gallery-3.png", alt: "Pregnant woman enjoying fresh water" },
-    { id: 4, src: "/images/gallery-4.png", alt: "Healthy runner drinking from bottle" },
-  ];
 
   return (
     <section className="py-16 md:py-20 px-5 md:px-12 bg-white text-[#1d2428] relative z-20">
@@ -25,10 +26,10 @@ export default function Gallery({ title = "Our people are happy", actionLabel = 
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
-          {photos.map((photo) => (
+          {PHOTOS.map((photo) => (
             <div
               key={photo.id}
-              className="relative w-full aspect-[4/5] overflow-hidden group bg-slate-50"
+              className="relative w-full aspect-4/5 overflow-hidden group bg-slate-50"
             >
               <Image
                 src={photo.src}

@@ -35,7 +35,7 @@ export default function PageHeader() {
           <Link href="/where-to-buy" className="hidden sm:inline hover:text-brand-red transition-colors">
             Where To Buy
           </Link>
-          <button aria-label="Cart" className="relative p-1">
+          <button type="button" aria-label="Cart" className="relative p-1">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>

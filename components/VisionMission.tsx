@@ -19,6 +19,7 @@ export default function VisionMission() {
 
         <div className="grid grid-cols-2 mt-12 max-w-[760px] mx-auto">
           <button
+            type="button"
             onClick={() => setActiveTab("vision")}
             className={`py-5 text-center font-hedvig text-xl md:text-2xl uppercase transition-all duration-300 ${activeTab === "vision"
               ? "bg-brand-yellow text-[#1d2428]"
@@ -29,6 +30,7 @@ export default function VisionMission() {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab("mission")}
             className={`py-5 text-center font-hedvig text-xl md:text-2xl uppercase transition-all duration-300 ${activeTab === "mission"
               ? "bg-brand-yellow text-[#1d2428]"

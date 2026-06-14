@@ -1,3 +1,5 @@
+minimumReleaseAge: 259200 # 3 days in seconds
+trustPolicy: no-downgrade
 allowBuilds:
   sharp: true
   unrs-resolver: true

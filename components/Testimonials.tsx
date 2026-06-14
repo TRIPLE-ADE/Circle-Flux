@@ -3,50 +3,51 @@
 import type { CSSProperties} from "react";
 import { TransitionEvent, useCallback, useState, useEffect } from "react";
 
+const SLIDE_MS = 900;
+const SLIDE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+const CARD_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const TESTIMONIALS = [
+  {
+    id: 0,
+    quote: "CircleFlux has been our primary table water supplier for over 2 years. Their delivery is always on time, and our customers frequently comment on how fresh the water tastes.",
+    author: "Emeka Obi",
+    role: "Supermarket Owner",
+  },
+  {
+    id: 1,
+    quote: "We have used Circleflux Water for several corporate and social events, and the feedback is always positive. The packaging is premium, and the quality is exceptional.",
+    author: "Patricia Adebayo",
+    role: "Operations Manager",
+  },
+  {
+    id: 2,
+    quote: "Outstanding water quality! I love the modern, premium look of the bottles. It makes a statement at our events and matches our brand aesthetic perfectly.",
+    author: "Funke Balogun",
+    role: "Event Planner",
+  },
+  {
+    id: 3,
+    quote: "As a health coach, hydration is key for my clients. CircleFlux offers the most balanced natural mineral taste in the market. Absolute purity in every pack.",
+    author: "Sarah Alao",
+    role: "Fitness & Wellness Coach",
+  },
+  {
+    id: 4,
+    quote: "Fantastic customer support and seamless wholesale orders. They handled our emergency order of 200 cases for our convention within 24 hours without delay.",
+    author: "Tunde Bakare",
+    role: "Logistics Coordinator",
+  },
+];
+
 export default function Testimonials() {
-  const SLIDE_MS = 900;
-  const SLIDE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-  const CARD_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
-  const testimonials = [
-    {
-      id: 0,
-      quote: "CircleFlux has been our primary table water supplier for over 2 years. Their delivery is always on time, and our customers frequently comment on how fresh the water tastes.",
-      author: "Emeka Obi",
-      role: "Supermarket Owner",
-    },
-    {
-      id: 1,
-      quote: "We have used Circleflux Water for several corporate and social events, and the feedback is always positive. The packaging is premium, and the quality is exceptional.",
-      author: "Patricia Adebayo",
-      role: "Operations Manager",
-    },
-    {
-      id: 2,
-      quote: "Outstanding water quality! I love the modern, premium look of the bottles. It makes a statement at our events and matches our brand aesthetic perfectly.",
-      author: "Funke Balogun",
-      role: "Event Planner",
-    },
-    {
-      id: 3,
-      quote: "As a health coach, hydration is key for my clients. CircleFlux offers the most balanced natural mineral taste in the market. Absolute purity in every pack.",
-      author: "Sarah Alao",
-      role: "Fitness & Wellness Coach",
-    },
-    {
-      id: 4,
-      quote: "Fantastic customer support and seamless wholesale orders. They handled our emergency order of 200 cases for our convention within 24 hours without delay.",
-      author: "Tunde Bakare",
-      role: "Logistics Coordinator",
-    },
-  ];
 
   const K = 2; // Clone padding count on each side
 
   // Build the extended list dynamically to support any testimonials list from backend
   const extendedTestimonials = [
-    ...testimonials.slice(-K),
-    ...testimonials,
-    ...testimonials.slice(0, K),
+    ...TESTIMONIALS.slice(-K),
+    ...TESTIMONIALS,
+    ...TESTIMONIALS.slice(0, K),
   ];
 
   const [virtualIndex, setVirtualIndex] = useState(K + 1); // Start at the second real element (Patricia)
@@ -55,7 +56,7 @@ export default function Testimonials() {
   const [dimensions, setDimensions] = useState({ cardWidth: 520, gap: 24 });
 
   const getRealIndex = (index: number) => {
-    return (index - K + testimonials.length) % testimonials.length;
+    return (index - K + TESTIMONIALS.length) % TESTIMONIALS.length;
   };
 
   const activeIndex = getRealIndex(virtualIndex);
@@ -102,16 +103,16 @@ export default function Testimonials() {
 
     setIsTransitioning(false);
 
-    if (virtualIndex >= testimonials.length + K) {
+    if (virtualIndex >= TESTIMONIALS.length + K) {
       setTransitionEnabled(false);
-      setVirtualIndex((prev) => prev - testimonials.length);
+      setVirtualIndex((prev) => prev - TESTIMONIALS.length);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setTransitionEnabled(true));
       });
     } else if (virtualIndex < K) {
       setTransitionEnabled(false);
-      setVirtualIndex((prev) => prev + testimonials.length);
-      requestAnimationFrame(() => {
+      setVirtualIndex((prev) => prev + TESTIMONIALS.length);
+        requestAnimationFrame(() => {
         requestAnimationFrame(() => setTransitionEnabled(true));
       });
     }
@@ -144,6 +145,7 @@ export default function Testimonials() {
 
         <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
           <button
+            type="button"
             onClick={moveLeft}
             aria-label="Move testimonials left"
             className="absolute left-5 sm:left-8 z-30 w-12 h-12 rounded-full bg-white/75 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-300"
@@ -154,6 +156,7 @@ export default function Testimonials() {
           </button>
 
           <button
+            type="button"
             onClick={moveRight}
             aria-label="Move testimonials right"
             className="absolute right-5 sm:right-8 z-30 w-12 h-12 rounded-full bg-white/75 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-300"
@@ -245,9 +248,10 @@ export default function Testimonials() {
         </div>
 
         <div className="flex justify-center gap-2.5 mt-5">
-          {testimonials.map((_, idx) => (
+          {TESTIMONIALS.map((t, idx) => (
             <button
-              key={idx}
+              type="button"
+              key={t.id}
               onClick={() => handleDotClick(idx)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === activeIndex ? "bg-brand-red" : "bg-[#eff2f9]"
                 }`}

@@ -8,22 +8,23 @@ import Testimonials from "@/components/Testimonials";
 import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
 
+const FAQS = [
+  {
+    question: "What product does CircleFlux offer?",
+    answer: "CircleFlux offers purified bottled table water for homes, events, retailers, and wholesale distribution.",
+  },
+  {
+    question: "How does CircleFlux ensure water quality?",
+    answer: "Every bottle goes through advanced purification, careful packaging, and regular quality checks before distribution.",
+  },
+  {
+    question: "Where is CircleFlux located?",
+    answer: "CircleFlux is located at 1, Otunba Babalola Street, Off Old Lagos/Abeokuta Road, Akinbo Village, Obafemi Owode, Ogun State.",
+  },
+];
+
 export default function WhereToBuyPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const faqs = [
-    {
-      question: "What product does CircleFlux offer?",
-      answer: "CircleFlux offers purified bottled table water for homes, events, retailers, and wholesale distribution.",
-    },
-    {
-      question: "How does CircleFlux ensure water quality?",
-      answer: "Every bottle goes through advanced purification, careful packaging, and regular quality checks before distribution.",
-    },
-    {
-      question: "Where is CircleFlux located?",
-      answer: "CircleFlux is located at 1, Otunba Babalola Street, Off Old Lagos/Abeokuta Road, Akinbo Village, Obafemi Owode, Ogun State.",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-white text-[#1d2428]">
@@ -92,7 +93,7 @@ export default function WhereToBuyPage() {
 
         <section className="px-6 md:px-12 pb-16 md:pb-20">
           <div className="max-w-4xl mx-auto bg-brand-yellow p-5 md:p-7 rounded-2xl">
-            <div className="bg-white aspect-[4/3] overflow-hidden">
+            <div className="bg-white aspect-4/3 overflow-hidden">
               <iframe
                 title="CircleFlux location map"
                 className="w-full h-full border-0"
@@ -112,7 +113,7 @@ export default function WhereToBuyPage() {
             </h2>
 
             <div className="text-left">
-              {faqs.map((faq, index) => (
+              {FAQS.map((faq, index) => (
                 <div key={faq.question} className="border-b border-white">
                   <button
                     type="button"

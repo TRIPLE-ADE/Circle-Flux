@@ -1,27 +1,28 @@
 import Image from "next/image";
 import CtaButton from "./CtaButton";
 
+const PRODUCTS = [
+  {
+    id: 1,
+    size: "50cl Pack",
+    badge: "SALE",
+    image: "/images/bottle-pack.png",
+  },
+  {
+    id: 2,
+    size: "75cl Pack",
+    badge: "SALE",
+    image: "/images/bottle-pack.png",
+  },
+  {
+    id: 3,
+    size: "1.5L Pack",
+    badge: "SALE",
+    image: "/images/bottle-pack.png",
+  },
+];
+
 export default function BestSellers() {
-  const products = [
-    {
-      id: 1,
-      size: "50cl Pack",
-      badge: "SALE",
-      image: "/images/bottle-pack.png",
-    },
-    {
-      id: 2,
-      size: "75cl Pack",
-      badge: "SALE",
-      image: "/images/bottle-pack.png",
-    },
-    {
-      id: 3,
-      size: "1.5L Pack",
-      badge: "SALE",
-      image: "/images/bottle-pack.png",
-    },
-  ];
 
   return (
     <section id="shop" className="py-16 md:py-20 px-6 md:px-12 bg-brand-pink text-[#1d2428] relative z-20">
@@ -36,7 +37,7 @@ export default function BestSellers() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12 max-w-4xl mx-auto">
-          {products.map((prod) => (
+          {PRODUCTS.map((prod) => (
             <div
               key={prod.id}
               className="flex flex-col items-center relative group"

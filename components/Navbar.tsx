@@ -18,7 +18,7 @@ export default function Navbar() {
       setHasMounted(true);
     });
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("scroll", handleScroll);
@@ -74,6 +74,7 @@ export default function Navbar() {
           </Link>
 
           <button
+            type="button"
             aria-label="Cart"
             className={`relative p-1 rounded-full transition-colors ${isScrolled ? "hover:bg-brand-teal/5" : "hover:bg-white/10"
               }`}
@@ -97,6 +98,7 @@ export default function Navbar() {
           </button>
 
           <button
+            type="button"
             aria-label="Toggle menu"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 rounded-full hover:bg-white/10"
