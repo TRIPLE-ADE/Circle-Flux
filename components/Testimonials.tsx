@@ -1,8 +1,12 @@
 "use client";
 
+import type { CSSProperties} from "react";
 import { TransitionEvent, useCallback, useState, useEffect } from "react";
 
 export default function Testimonials() {
+  const SLIDE_MS = 900;
+  const SLIDE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+  const CARD_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
   const testimonials = [
     {
       id: 0,
@@ -70,14 +74,14 @@ export default function Testimonials() {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
-  const handleNext = useCallback(() => {
+  const moveLeft = useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTransitionEnabled(true);
     setVirtualIndex((prev) => prev + 1);
   }, [isTransitioning]);
 
-  const handlePrev = () => {
+  const moveRight = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTransitionEnabled(true);
@@ -99,34 +103,28 @@ export default function Testimonials() {
     setIsTransitioning(false);
 
     if (virtualIndex >= testimonials.length + K) {
-      // Reached cloned elements at the right end. Teleport back.
       setTransitionEnabled(false);
       setVirtualIndex((prev) => prev - testimonials.length);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTransitionEnabled(true));
+      });
     } else if (virtualIndex < K) {
-      // Reached cloned elements at the left end. Teleport forward.
       setTransitionEnabled(false);
       setVirtualIndex((prev) => prev + testimonials.length);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTransitionEnabled(true));
+      });
     }
   };
-
-  // Re-enable transition styling using setTimeout to ensure reliability in background/inactive tabs
-  useEffect(() => {
-    if (!transitionEnabled) {
-      const timeout = setTimeout(() => {
-        setTransitionEnabled(true);
-      }, 30);
-      return () => clearTimeout(timeout);
-    }
-  }, [transitionEnabled]);
 
   // Auto-slide effect
   useEffect(() => {
     const timer = setInterval(() => {
-      handleNext();
+      moveLeft();
     }, 6000);
 
     return () => clearInterval(timer);
-  }, [handleNext]);
+  }, [moveLeft]);
 
   return (
     <section
@@ -146,8 +144,8 @@ export default function Testimonials() {
 
         <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
           <button
-            onClick={handlePrev}
-            aria-label="Previous testimonial"
+            onClick={moveLeft}
+            aria-label="Move testimonials left"
             className="absolute left-5 sm:left-8 z-30 w-12 h-12 rounded-full bg-white/75 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-300"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -156,8 +154,8 @@ export default function Testimonials() {
           </button>
 
           <button
-            onClick={handleNext}
-            aria-label="Next testimonial"
+            onClick={moveRight}
+            aria-label="Move testimonials right"
             className="absolute right-5 sm:right-8 z-30 w-12 h-12 rounded-full bg-white/75 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-300"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -172,22 +170,23 @@ export default function Testimonials() {
               className="relative flex"
               style={{
                 left: "50%",
-                transform: `translateX(-${(virtualIndex * (dimensions.cardWidth + dimensions.gap)) + dimensions.cardWidth / 2}px)`,
-                transition: transitionEnabled ? "transform 650ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
+                transform: `translate3d(-${(virtualIndex * (dimensions.cardWidth + dimensions.gap)) + dimensions.cardWidth / 2}px, 0, 0)`,
+                transition: transitionEnabled ? `transform ${SLIDE_MS}ms ${SLIDE_EASE}` : "none",
                 width: `${extendedTestimonials.length * (dimensions.cardWidth + dimensions.gap)}px`,
                 gap: `${dimensions.gap}px`,
+                willChange: "transform",
+                backfaceVisibility: "hidden",
               }}
             >
               {extendedTestimonials.map((test, idx) => {
-                const isActive = idx === virtualIndex;
-                const TRANSITION = "700ms cubic-bezier(0.22,1,0.36,1)";
-                const cardStyle = {
+                const isActive = getRealIndex(idx) === activeIndex;
+                const cardStyle: CSSProperties = {
                   width: `${dimensions.cardWidth}px`,
-                  backgroundColor: isActive ? "#14aee5" : "#F2B705",
+                  backgroundColor: isActive ? "#14aee5" : undefined,
                   boxShadow: isActive
                     ? "0 22px 42px rgba(20, 174, 229, 0.18)"
                     : "0 10px 24px rgba(242, 189, 29, 0.12)",
-                  transition: `background-color ${TRANSITION}, box-shadow ${TRANSITION}, transform ${TRANSITION}, opacity ${TRANSITION}`,
+                  transition: `background-color ${SLIDE_MS}ms ${CARD_EASE}, box-shadow ${SLIDE_MS}ms ${CARD_EASE}, transform ${SLIDE_MS}ms ${CARD_EASE}`,
                 };
 
                 return (
@@ -201,21 +200,20 @@ export default function Testimonials() {
                       }
                     }}
                     style={cardStyle}
-                    className={`relative shrink-0 rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center text-[#1d2428] border border-white/30 will-change-transform ${
+                    className={`shrink-0 overflow-hidden rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center text-[#1d2428] bg-brand-yellow border border-white/30 ${
                       isActive
-                        ? "scale-100 opacity-100 z-10"
-                        : "scale-[0.94] opacity-95 hover:opacity-100 cursor-pointer"
+                        ? "scale-100 z-10"
+                        : "scale-[0.94] cursor-pointer"
                     }`}
                   >
-
                     <div>
                       <div className="flex gap-1 justify-center mb-5">
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
                             style={{
-                              color: "#F2B705",
-                              fill: "#F2B705",
+                              color: isActive ? "#F2B705" : "#14aee5",
+                              fill: isActive ? "#F2B705" : "#14aee5",
                             }}
                             className="w-4 h-4"
                             viewBox="0 0 20 20"
@@ -225,19 +223,16 @@ export default function Testimonials() {
                         ))}
                       </div>
 
-                      <p className="font-overpass text-sm sm:text-base md:text-lg leading-relaxed font-black">
+                      <p className="font-overpass text-sm sm:text-base md:text-lg leading-relaxed font-black text-[#1d2428]">
                         &ldquo;{test.quote}&rdquo;
                       </p>
                     </div>
 
                     <div className="mt-5">
-                      <h4 className="font-overpass font-black text-[10px]">
+                      <h4 className="font-overpass font-black text-[10px] text-[#1d2428]">
                         {test.author}
                       </h4>
-                      <p
-                        style={{ color: "rgba(29,36,40,0.65)" }}
-                        className="font-source-sans text-[10px] font-semibold"
-                      >
+                      <p className="font-source-sans text-[10px] font-semibold text-[#1d2428]/65">
                         {test.role}
                       </p>
                     </div>
