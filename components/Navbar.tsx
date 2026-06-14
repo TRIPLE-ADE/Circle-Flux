@@ -1,29 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      handleScroll();
+      setHasMounted(true);
+    });
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+    <header className={`fixed top-0 left-0 w-full z-50 ${hasMounted ? "transition-all duration-300" : ""}`}>
       {/* Top Announcement Bar */}
       <div className="w-full bg-brand-yellow text-brand-teal text-center py-2 px-4 text-xs md:text-sm font-semibold tracking-wide font-overpass flex justify-center items-center gap-1 shadow-sm">
-        <span>Refer A Friend To Take Your Order</span>
+        <span>We&apos;re Available To Take Your Order</span>
         <svg
           className="w-4 h-4"
           fill="none"
@@ -37,37 +43,39 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <nav
-        className={`w-full transition-all duration-300 py-4 px-6 md:px-12 flex justify-between items-center ${isScrolled
+        className={`relative w-full ${hasMounted ? "transition-all duration-300" : ""} min-h-14 px-5 md:px-8 flex justify-between items-center ${isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-md text-brand-teal"
           : "bg-transparent text-white"
           }`}
       >
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="font-overpass text-2xl font-black tracking-tight uppercase">
-            Circleflux
-          </span>
-        </Link>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8 font-source-sans text-sm font-medium tracking-wide">
-          <Link href="#our-story" className="hover:opacity-80 transition-opacity">
-            About
+        <div className="hidden md:flex items-center gap-8 font-overpass text-[11px] font-black uppercase">
+          <Link href="/#shop" className="hover:opacity-80 transition-opacity">
+            Order
           </Link>
-          <Link href="#our-water" className="hover:opacity-80 transition-opacity">
+          <Link href="/#our-water" className="hover:opacity-80 transition-opacity">
             Our Water
           </Link>
-          <Link href="#contact" className="hover:opacity-80 transition-opacity">
-            Contact Us
+          <Link href="/about-us" className="hover:opacity-80 transition-opacity">
+            About Us
           </Link>
         </div>
 
-        {/* Right side Actions (Cart & Mobile Toggle) */}
-        <div className="flex items-center gap-4">
-          {/* Shopping Cart Icon */}
+        <Link
+          href="/"
+          aria-label="CircleFlux home"
+          className="md:absolute md:left-1/2 md:-translate-x-1/2 bg-brand-red text-white px-5 py-1 font-overpass text-2xl font-black leading-none"
+        >
+          circle
+        </Link>
+
+        <div className="flex items-center gap-4 md:gap-5 font-overpass text-[11px] font-black uppercase">
+          <Link href="/where-to-buy" className="hidden sm:inline hover:opacity-80 transition-opacity">
+            Where To Buy
+          </Link>
+
           <button
             aria-label="Cart"
-            className={`relative p-2 rounded-full transition-colors ${isScrolled ? "hover:bg-brand-teal/5" : "hover:bg-white/10"
+            className={`relative p-1 rounded-full transition-colors ${isScrolled ? "hover:bg-brand-teal/5" : "hover:bg-white/10"
               }`}
           >
             <svg
@@ -88,7 +96,6 @@ export default function Navbar() {
             </span>
           </button>
 
-          {/* Mobile Menu Toggle */}
           <button
             aria-label="Toggle menu"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -126,25 +133,32 @@ export default function Navbar() {
       >
         <div className="flex flex-col h-full pt-20 px-6 font-source-sans text-brand-teal text-lg font-semibold gap-6">
           <Link
-            href="#our-story"
+            href="/#shop"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="hover:text-brand-cyan transition-colors"
+          >
+            Order
+          </Link>
+          <Link
+            href="/about-us"
             onClick={() => setIsMobileMenuOpen(false)}
             className="hover:text-brand-cyan transition-colors"
           >
             About
           </Link>
           <Link
-            href="#our-water"
+            href="/#our-water"
             onClick={() => setIsMobileMenuOpen(false)}
             className="hover:text-brand-cyan transition-colors"
           >
             Our Water
           </Link>
           <Link
-            href="#contact"
+            href="/where-to-buy"
             onClick={() => setIsMobileMenuOpen(false)}
             className="hover:text-brand-cyan transition-colors"
           >
-            Contact Us
+            Where To Buy
           </Link>
         </div>
       </div>

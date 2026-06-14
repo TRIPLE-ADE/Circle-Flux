@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hedvig_Letters_Serif, Overpass, Source_Sans_3 } from "next/font/google";
+import ScrollRestoration from "@/components/ScrollRestoration";
 import "./globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -30,10 +31,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${sourceSans.variable} ${overpass.variable} ${hedvigSerif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ScrollRestoration />
+        {children}
+      </body>
     </html>
   );
 }
-

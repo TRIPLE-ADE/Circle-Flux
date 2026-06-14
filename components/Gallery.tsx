@@ -1,6 +1,12 @@
 import Image from "next/image";
+import CtaButton from "./CtaButton";
 
-export default function Gallery() {
+type GalleryProps = {
+  title?: string;
+  actionLabel?: string;
+};
+
+export default function Gallery({ title = "Our people are happy", actionLabel = "Follow Us" }: GalleryProps) {
   const photos = [
     { id: 1, src: "/images/gallery-1.png", alt: "Active happy customer in safari hat" },
     { id: 2, src: "/images/gallery-2.png", alt: "Happy toddler drinking clear water" },
@@ -14,7 +20,7 @@ export default function Gallery() {
 
         <div className="mb-12">
           <h2 className="font-hedvig text-3xl md:text-[38px] font-normal leading-tight">
-            Our people are happy
+            {title}
           </h2>
         </div>
 
@@ -37,9 +43,9 @@ export default function Gallery() {
         </div>
 
         <div className="mt-14">
-          <button className="bg-brand-red text-white font-overpass text-[10px] font-black uppercase px-6 py-3 rounded-full border-2 border-brand-yellow hover:bg-brand-red/90 active:scale-95 transition-all">
-            Follow Us
-          </button>
+          <CtaButton>
+            {actionLabel}
+          </CtaButton>
         </div>
 
       </div>

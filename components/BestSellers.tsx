@@ -1,4 +1,5 @@
 import Image from "next/image";
+import CtaButton from "./CtaButton";
 
 export default function BestSellers() {
   const products = [
@@ -55,9 +56,9 @@ export default function BestSellers() {
                 </div>
               </div>
 
-              <button className="bg-brand-red text-white font-overpass text-[10px] font-black uppercase px-6 py-3 rounded-full border-2 border-brand-yellow hover:bg-brand-red/90 transition-all active:scale-95">
+              <CtaButton>
                 Order Now
-              </button>
+              </CtaButton>
             </div>
           ))}
         </div>

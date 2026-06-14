@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CtaButton from "./CtaButton";
 
 export default function Footer() {
   return (
@@ -10,12 +11,9 @@ export default function Footer() {
             <h3 className="font-overpass text-lg md:text-xl font-black uppercase leading-tight max-w-[420px]">
               CARE ABOUT QUALITY WATER THAT MAKES YOU FEEL REFRESHED PACKED WITH ESSENTIAL NUTRIENT, THEN GET CIRCLEFLUX WATER TODAY!
             </h3>
-            <Link
-              href="#shop"
-              className="inline-block bg-brand-red text-white font-overpass text-[10px] font-black uppercase px-5 py-3 rounded-full border-2 border-brand-yellow hover:bg-brand-red/90 transition-colors"
-            >
+            <CtaButton href="/where-to-buy" variant="footer">
               Place Order
-            </Link>
+            </CtaButton>
           </div>
 
           <div className="hidden md:block md:col-span-1" />
@@ -25,10 +23,10 @@ export default function Footer() {
               Shop
             </h4>
             <div className="flex flex-col gap-2 font-source-sans text-sm text-[#1d2428]/75">
-              <Link href="#shop" className="hover:text-brand-red transition-colors">
+              <Link href="/where-to-buy" className="hover:text-brand-red transition-colors">
                 Where to buy
               </Link>
-              <Link href="#shop" className="hover:text-brand-red transition-colors">
+              <Link href="/#shop" className="hover:text-brand-red transition-colors">
                 Our Products
               </Link>
             </div>
@@ -39,7 +37,7 @@ export default function Footer() {
               Help
             </h4>
             <div className="flex flex-col gap-2 font-source-sans text-sm text-[#1d2428]/75">
-              <Link href="#contact" className="hover:text-brand-red transition-colors">
+              <Link href="/where-to-buy" className="hover:text-brand-red transition-colors">
                 Contact Us
               </Link>
               <Link href="#contact" className="hover:text-brand-red transition-colors">

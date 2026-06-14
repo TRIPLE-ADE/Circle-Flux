@@ -1,4 +1,5 @@
 import Image from "next/image";
+import CtaButton from "./CtaButton";
 
 export default function Standards() {
   return (
@@ -17,17 +18,14 @@ export default function Standards() {
           </p>
 
           <div className="mt-7">
-            <a
-              href="#shop"
-              className="inline-block bg-brand-red text-white font-overpass text-[10px] font-black uppercase px-5 py-3 rounded-full border-2 border-brand-yellow hover:bg-brand-red/90 active:scale-95 transition-all"
-            >
+            <CtaButton href="/where-to-buy" size="md">
               Where to buy
-            </a>
+            </CtaButton>
           </div>
         </div>
 
         <div className="md:col-span-5 flex justify-center md:justify-end z-10 w-full self-end">
-          <div className="relative w-full max-w-[390px] aspect-[3/4] md:-mb-1">
+          <div className="relative w-full max-w-[390px] aspect-3/4 md:-mb-1">
             <Image
               src="/images/standards-bg.png"
               alt="Happy person drinking clean bottle water"

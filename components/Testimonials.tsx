@@ -129,7 +129,10 @@ export default function Testimonials() {
   }, [handleNext]);
 
   return (
-    <section className="py-16 md:py-20 px-4 sm:px-6 md:px-12 bg-white text-[#1d2428] relative overflow-hidden z-20">
+    <section
+      data-testid="testimonials"
+      className="py-16 md:py-20 px-4 sm:px-6 md:px-12 bg-white text-[#1d2428] relative overflow-hidden z-20"
+    >
       <div className="max-w-6xl mx-auto">
 
         <div className="text-center mb-11">
@@ -164,39 +167,57 @@ export default function Testimonials() {
 
           <div className="w-full overflow-hidden py-5 px-2 select-none">
             <div
+              data-testid="testimonial-track"
               onTransitionEnd={handleTransitionEnd}
               className="relative flex"
               style={{
                 left: "50%",
                 transform: `translateX(-${(virtualIndex * (dimensions.cardWidth + dimensions.gap)) + dimensions.cardWidth / 2}px)`,
-                transition: transitionEnabled ? "transform 500ms cubic-bezier(0.25, 1, 0.5, 1)" : "none",
+                transition: transitionEnabled ? "transform 650ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
                 width: `${extendedTestimonials.length * (dimensions.cardWidth + dimensions.gap)}px`,
                 gap: `${dimensions.gap}px`,
               }}
             >
               {extendedTestimonials.map((test, idx) => {
-                const isActive = getRealIndex(idx) === activeIndex;
+                const isActive = idx === virtualIndex;
+                const TRANSITION = "700ms cubic-bezier(0.22,1,0.36,1)";
+                const cardStyle = {
+                  width: `${dimensions.cardWidth}px`,
+                  backgroundColor: isActive ? "#14aee5" : "#F2B705",
+                  boxShadow: isActive
+                    ? "0 22px 42px rgba(20, 174, 229, 0.18)"
+                    : "0 10px 24px rgba(242, 189, 29, 0.12)",
+                  transition: `background-color ${TRANSITION}, box-shadow ${TRANSITION}, transform ${TRANSITION}, opacity ${TRANSITION}`,
+                };
 
                 return (
                   <div
+                    data-testid="testimonial-card"
+                    data-active={isActive ? "true" : "false"}
                     key={`${test.id}-${idx}`}
                     onClick={() => {
                       if (!isActive && !isTransitioning) {
                         setVirtualIndex(idx);
                       }
                     }}
-                    style={{ width: `${dimensions.cardWidth}px` }}
-                    className={`shrink-0 rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center transition-all duration-500 ease-out ${isActive
-                      ? "bg-brand-cyan text-[#1d2428] scale-100 opacity-100 z-10"
-                      : "bg-brand-yellow text-[#1d2428] scale-95 opacity-100 hover:opacity-90 cursor-pointer"
-                      }`}
+                    style={cardStyle}
+                    className={`relative shrink-0 rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center text-[#1d2428] border border-white/30 will-change-transform ${
+                      isActive
+                        ? "scale-100 opacity-100 z-10"
+                        : "scale-[0.94] opacity-95 hover:opacity-100 cursor-pointer"
+                    }`}
                   >
+
                     <div>
                       <div className="flex gap-1 justify-center mb-5">
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
-                            className="w-4 h-4 text-brand-yellow fill-brand-yellow"
+                            style={{
+                              color: "#F2B705",
+                              fill: "#F2B705",
+                            }}
+                            className="w-4 h-4"
                             viewBox="0 0 20 20"
                           >
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -213,7 +234,10 @@ export default function Testimonials() {
                       <h4 className="font-overpass font-black text-[10px]">
                         {test.author}
                       </h4>
-                      <p className="font-source-sans text-[10px] font-semibold text-[#1d2428]/65">
+                      <p
+                        style={{ color: "rgba(29,36,40,0.65)" }}
+                        className="font-source-sans text-[10px] font-semibold"
+                      >
                         {test.role}
                       </p>
                     </div>

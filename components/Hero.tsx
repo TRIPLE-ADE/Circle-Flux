@@ -1,4 +1,6 @@
 import Image from "next/image";
+import CtaButton from "./CtaButton";
+
 export default function Hero() {
   return (
     <section className="relative w-full h-[95vh] flex items-center justify-center overflow-hidden">
@@ -12,11 +14,12 @@ export default function Hero() {
         sizes="100vw"
       />
       {/* Dark Overlay for Text Legibility */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/50 via-brand-teal/30 to-brand-teal/80 z-10" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/75 via-brand-teal/55 to-brand-teal/90 z-10" />
+      <div className="absolute inset-0 bg-black/15 z-10" />
       {/* Hero Content */}
       <div className="relative z-20 text-center flex flex-col items-center px-4 max-w-6xl mt-16 md:mt-24">
         {/* Title */}
-        <h1 className="font-hedvig text-4xl md:text-7xl lg:text-8xl text-white font-normal leading-[1.1] tracking-tight drop-shadow-md select-none animate-slide-up">
+        <h1 className="font-hedvig text-5xl md:text-8xl lg:text-[104px] text-white font-normal leading-[1.03] tracking-normal drop-shadow-lg select-none animate-slide-up">
           Premium Table Water
         </h1>
         {/* Description */}
@@ -25,12 +28,9 @@ export default function Hero() {
         </p>
         {/* Interactive Action Button */}
         <div className="mt-10 animate-fade-in-delayed">
-          <a
-            href="#shop"
-            className="inline-block bg-brand-red text-white font-overpass text-sm md:text-base font-black uppercase tracking-wider px-10 py-4 rounded-full border-2 border-brand-yellow shadow-lg shadow-brand-red/20 transform transition-all duration-300 hover:scale-105 hover:bg-brand-red/90 hover:shadow-brand-yellow/30 active:scale-95"
-          >
+          <CtaButton href="/#shop" size="md">
             ORDER NOW
-          </a>
+          </CtaButton>
         </div>
       </div>
       {/* Wave bottom decoration */}
