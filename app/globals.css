@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #003B46; /* Custom brand-teal default text */
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Brand Color Palette */
+  --color-brand-teal: #003B46;
+  --color-brand-cyan: #00A5EC;
+  --color-brand-yellow: #F2B705;
+  --color-brand-pink: #FDF1F0;
+  --color-brand-red: #E60012;
+
+  /* Brand Typography definitions */
+  --font-source-sans: var(--font-source-sans);
+  --font-hedvig: var(--font-hedvig);
+  --font-overpass: var(--font-overpass);
+
+  /* Set default Tailwind classes to point to our Google Fonts alternatives */
+  --font-sans: var(--font-source-sans);
+  --font-serif: var(--font-hedvig);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-source-sans), sans-serif;
+}
+
