@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,19 +44,22 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <nav
-        className={`relative w-full ${hasMounted ? "transition-all duration-300" : ""} min-h-14 px-5 md:px-8 flex justify-between items-center ${isScrolled
+        className={`relative w-full ${hasMounted ? "transition-all duration-300" : ""} min-h-16 md:min-h-20 px-5 md:px-8 flex justify-between items-center ${isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-md text-brand-teal"
           : "bg-transparent text-white"
           }`}
       >
-        <div className="hidden md:flex items-center gap-8 font-overpass text-[11px] font-black uppercase">
-          <Link href="/#shop" className="hover:opacity-80 transition-opacity">
+        <div className="hidden md:flex items-center gap-8 font-overpass text-base font-black uppercase">
+          <Link href="/" className="hover:text-brand-red transition-colors">
+            Home
+          </Link>
+          <Link href="/#shop" className="hover:text-brand-red transition-colors">
             Order
           </Link>
-          <Link href="/#our-water" className="hover:opacity-80 transition-opacity">
+          <Link href="/#our-water" className="hover:text-brand-red transition-colors">
             Our Water
           </Link>
-          <Link href="/about-us" className="hover:opacity-80 transition-opacity">
+          <Link href="/about-us" className="hover:text-brand-red transition-colors">
             About Us
           </Link>
         </div>
@@ -63,12 +67,12 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label="CircleFlux home"
-          className="md:absolute md:left-1/2 md:-translate-x-1/2 bg-brand-red text-white px-5 py-1 font-overpass text-2xl font-black leading-none"
+          className="md:absolute md:left-1/2 md:-translate-x-1/2"
         >
-          circle
+          <Image src={isScrolled ? "/images/red-logo.png" : "/images/logo.png"} alt="Logo" width={140} height={140} />
         </Link>
 
-        <div className="flex items-center gap-4 md:gap-5 font-overpass text-[11px] font-black uppercase">
+        <div className="flex items-center gap-4 md:gap-5 font-overpass text-base font-black uppercase">
           <Link href="/where-to-buy" className="hidden sm:inline hover:opacity-80 transition-opacity">
             Where To Buy
           </Link>
@@ -76,7 +80,7 @@ export default function Navbar() {
           <button
             type="button"
             aria-label="Cart"
-            className={`relative p-1 rounded-full transition-colors ${isScrolled ? "hover:bg-brand-teal/5" : "hover:bg-white/10"
+            className={`p-1 rounded-full transition-colors ${isScrolled ? "hover:bg-brand-teal/5" : "hover:bg-white/10"
               }`}
           >
             <svg
@@ -92,9 +96,6 @@ export default function Navbar() {
                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
               />
             </svg>
-            <span className="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-              0
-            </span>
           </button>
 
           <button
@@ -135,30 +136,37 @@ export default function Navbar() {
       >
         <div className="flex flex-col h-full pt-20 px-6 font-source-sans text-brand-teal text-lg font-semibold gap-6">
           <Link
+            href="/"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="hover:text-brand-red transition-colors"
+          >
+            Home
+          </Link>
+          <Link
             href="/#shop"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="hover:text-brand-cyan transition-colors"
+            className="hover:text-brand-red transition-colors"
           >
             Order
           </Link>
           <Link
             href="/about-us"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="hover:text-brand-cyan transition-colors"
+            className="hover:text-brand-red transition-colors"
           >
             About
           </Link>
           <Link
             href="/#our-water"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="hover:text-brand-cyan transition-colors"
+            className="hover:text-brand-red transition-colors"
           >
             Our Water
           </Link>
           <Link
             href="/where-to-buy"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="hover:text-brand-cyan transition-colors"
+            className="hover:text-brand-red transition-colors"
           >
             Where To Buy
           </Link>

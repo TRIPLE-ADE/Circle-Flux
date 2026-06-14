@@ -44,7 +44,7 @@ export default function Gallery({ title = "Our people are happy", actionLabel = 
         </div>
 
         <div className="mt-14">
-          <CtaButton>
+          <CtaButton size="md">
             {actionLabel}
           </CtaButton>
         </div>

@@ -4,19 +4,19 @@ import CtaButton from "./CtaButton";
 const PRODUCTS = [
   {
     id: 1,
-    size: "50cl Pack",
+    size: "15cl Pack",
     badge: "SALE",
     image: "/images/bottle-pack.png",
   },
   {
     id: 2,
-    size: "75cl Pack",
+    size: "50cl Pack",
     badge: "SALE",
     image: "/images/bottle-pack.png",
   },
   {
     id: 3,
-    size: "1.5L Pack",
+    size: "75cl Pack",
     badge: "SALE",
     image: "/images/bottle-pack.png",
   },
@@ -44,7 +44,7 @@ export default function BestSellers() {
             >
               <div className="w-full aspect-[1.16] bg-[#edf2f9] relative flex items-center justify-center mb-7">
                 <span className="absolute top-3 left-3 z-10 bg-brand-red text-white font-overpass text-[9px] font-black uppercase px-3 py-1 rounded-full">
-                  {prod.badge}
+                  {prod.size}
                 </span>
                 <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-[1.03]">
                   <Image
@@ -57,7 +57,7 @@ export default function BestSellers() {
                 </div>
               </div>
 
-              <CtaButton>
+              <CtaButton size="md">
                 Order Now
               </CtaButton>
             </div>

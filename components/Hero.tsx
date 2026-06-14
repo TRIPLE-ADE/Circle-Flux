@@ -14,7 +14,7 @@ export default function Hero() {
         sizes="100vw"
       />
       {/* Dark Overlay for Text Legibility */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/75 via-brand-teal/55 to-brand-teal/90 z-10" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/45 via-brand-teal/25 to-brand-teal/70 z-10" />
       <div className="absolute inset-0 bg-black/15 z-10" />
       {/* Hero Content */}
       <div className="relative z-20 text-center flex flex-col items-center px-4 max-w-6xl mt-16 md:mt-24">

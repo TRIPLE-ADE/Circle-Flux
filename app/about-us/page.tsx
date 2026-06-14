@@ -9,23 +9,21 @@ export default function AboutUsPage() {
       <PageHeader />
 
       <main>
-        <section className="relative min-h-[420px] md:min-h-[520px] flex items-center justify-center overflow-hidden text-white">
+        <section className="relative min-h-[420px] md:min-h-[600px] flex items-center justify-center overflow-hidden text-white">
           <Image
-            src="/images/hero-bg.png"
+            src="/images/about-bg.png"
             alt="Clean water surface"
             fill
             priority
             className="object-cover"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-[#002c3a]/55" />
           <div className="relative z-10 text-center px-6 max-w-4xl">
             <p className="font-overpass text-lg md:text-2xl uppercase tracking-[0.04em] mb-4">
               We Believe
             </p>
             <h1 className="font-hedvig text-5xl md:text-7xl leading-[1.05]">
               Our water should
-              <br />
               be 100% clean &amp; natural
             </h1>
           </div>
@@ -33,9 +31,9 @@ export default function AboutUsPage() {
 
         <section className="bg-[#07586a] text-white px-6 md:px-12 py-16 md:py-20">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div className="relative aspect-[4/3] md:aspect-square">
+            <div className="relative aspect-4/3 md:aspect-square">
               <Image
-                src="/images/bottle-pack.png"
+                src="/images/bottle.png"
                 alt="CircleFlux bottled water pack"
                 fill
                 className="object-contain"
@@ -71,9 +69,9 @@ export default function AboutUsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-[0.8fr_1.2fr] gap-10 items-start">
-              <div className="relative aspect-[4/5]">
+              <div className="relative aspect-4/5">
                 <Image
-                  src="/images/water-pour.png"
+                  src="/images/about-image-1.png"
                   alt="Clear bottled water"
                   fill
                   className="object-cover"
@@ -119,11 +117,7 @@ export default function AboutUsPage() {
               The Solution
             </p>
             <h2 className="font-hedvig text-5xl md:text-7xl leading-[1.12]">
-              Pure water to help you
-              <br />
-              power through your
-              <br />
-              day.
+              Pure water to help you power through your day.
             </h2>
           </div>
         </section>
@@ -144,7 +138,7 @@ export default function AboutUsPage() {
           </div>
           <div className="bg-brand-yellow relative min-h-[520px] overflow-hidden">
             <Image
-              src="/images/bottle-pack.png"
+              src="/images/about-image-2.png"
               alt="CircleFlux bottle"
               fill
               className="object-contain scale-125 rotate-12 translate-x-10"

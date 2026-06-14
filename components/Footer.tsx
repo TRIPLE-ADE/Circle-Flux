@@ -11,7 +11,7 @@ export default function Footer() {
             <h3 className="font-overpass text-lg md:text-xl font-black uppercase leading-tight max-w-[420px]">
               CARE ABOUT QUALITY WATER THAT MAKES YOU FEEL REFRESHED PACKED WITH ESSENTIAL NUTRIENT, THEN GET CIRCLEFLUX WATER TODAY!
             </h3>
-            <CtaButton href="/where-to-buy" variant="footer">
+            <CtaButton href="/where-to-buy" variant="footer" size="md">
               Place Order
             </CtaButton>
           </div>

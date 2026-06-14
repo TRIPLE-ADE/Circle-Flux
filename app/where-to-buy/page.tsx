@@ -36,7 +36,6 @@ export default function WhereToBuyPage() {
             <div className="text-white">
               <h1 className="font-hedvig text-5xl md:text-7xl leading-[1.04]">
                 You can find us at a
-                <br />
                 store near you
               </h1>
               <p className="font-overpass text-xl md:text-2xl leading-snug mt-5 max-w-xl">
@@ -45,7 +44,7 @@ export default function WhereToBuyPage() {
             </div>
             <div className="relative min-h-[260px] md:min-h-[360px]">
               <Image
-                src="/images/bottle-pack.png"
+                src="/images/bottle.png"
                 alt="CircleFlux bottled water pack"
                 fill
                 priority
@@ -83,7 +82,8 @@ export default function WhereToBuyPage() {
                 <p className="text-2xl font-black mb-2">Since</p>
                 <p className="text-[112px] md:text-[150px] font-black leading-[0.78]">
                   20
-                  <br />
+                </p>
+                <p className="text-[132px] md:text-[170px] font-black leading-[0.78]">
                   21
                 </p>
               </div>
