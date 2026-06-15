@@ -76,7 +76,7 @@ export default function Footer() {
             CircleFlux
           </span>
           <p className="font-source-sans text-xs font-semibold text-[#1d2428]/65 mt-1 select-none">
-            Designed and developed by designbykode website services
+            Designed and developed by: designbyadeiza website services
           </p>
         </div>
 
