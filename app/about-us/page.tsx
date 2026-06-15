@@ -1,14 +1,14 @@
 import Image from "next/image";
-import PageHeader from "@/components/PageHeader";
+import Navbar from "@/components/Navbar";
 import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
 
 export default function AboutUsPage() {
   return (
     <div className="min-h-screen bg-white text-[#1d2428]">
-      <PageHeader />
+      <Navbar variant="solid" />
 
-      <main>
+      <main className="pt-[116px]">
         <section className="relative min-h-[420px] md:min-h-[600px] flex items-center justify-center overflow-hidden text-white">
           <Image
             src="/images/about-bg.png"
@@ -104,13 +104,17 @@ export default function AboutUsPage() {
         </section>
 
         <section className="relative min-h-[560px] md:min-h-[680px] flex items-center justify-center overflow-hidden text-white">
-          <Image
-            src="/images/hero-bg.png"
-            alt="Water glow"
-            fill
-            className="object-cover"
-            sizes="100vw"
-          />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster="/images/hero-bg.png"
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/videos/hero-video.mp4" type="video/mp4" />
+          </video>
           <div className="absolute inset-0 bg-brand-teal/45" />
           <div className="relative z-10 text-center px-6 max-w-4xl">
             <p className="font-overpass text-lg md:text-xl uppercase tracking-[0.04em] mb-4">

@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 
 export default function OurWater() {
   return (
@@ -24,14 +24,18 @@ export default function OurWater() {
         </div>
 
         <div className="flex justify-center md:justify-end relative">
-          <div className="relative w-full max-w-[420px] aspect-video overflow-hidden">
-            <Image
-              src="/images/water-pour.png"
-              alt="Water pouring into crystal clear glass"
-              fill
-              className="object-cover"
-              sizes="(max-w-768px) 100vw, 450px"
-            />
+          <div className="relative w-full max-w-[420px] aspect-video overflow-hidden rounded-lg">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster="/images/water-pour.png"
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/videos/about-water-video.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </div>

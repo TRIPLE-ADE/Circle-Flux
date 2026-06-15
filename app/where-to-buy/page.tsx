@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import PageHeader from "@/components/PageHeader";
+import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import Testimonials from "@/components/Testimonials";
 import Gallery from "@/components/Gallery";
@@ -28,9 +28,9 @@ export default function WhereToBuyPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#1d2428]">
-      <PageHeader />
+      <Navbar variant="solid" />
 
-      <main>
+      <main className="pt-[116px]">
         <section className="bg-brand-cyan px-6 md:px-12 py-16 md:py-20 overflow-hidden">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="text-white">

@@ -1,18 +1,56 @@
-import Image from "next/image";
+"use client";
+
+import { useRef, useEffect } from "react";
 import CtaButton from "./CtaButton";
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = videoRef.current;
+    if (!section || !video) return;
+
+    // Use IntersectionObserver to only play video when in viewport
+    // This prevents unnecessary decoding work when the hero is scrolled past
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {
+            // Autoplay may be blocked by browser policy — fail silently
+          });
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative w-full h-[95vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <Image
-        src="/images/hero-bg.png"
-        alt="Premium Clean Water Surface Background"
-        fill
-        priority
-        className="object-cover"
-        sizes="100vw"
-      />
+    <section
+      ref={sectionRef}
+      aria-label="Hero section introducing premium table water brand"
+      className="relative w-full h-[95vh] flex items-center justify-center overflow-hidden"
+    >
+      {/* Background Video — GPU-composited layer to prevent scroll jank */}
+      <video
+        ref={videoRef}
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster="/images/hero-bg.png"
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ willChange: "transform", transform: "translateZ(0)" }}
+      >
+        <source src="/videos/hero-video.mp4" type="video/mp4" />
+      </video>
       {/* Dark Overlay for Text Legibility */}
       <div className="absolute inset-0 bg-linear-to-b from-black/45 via-brand-teal/25 to-brand-teal/70 z-10" />
       <div className="absolute inset-0 bg-black/15 z-10" />

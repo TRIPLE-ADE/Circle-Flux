@@ -21,6 +21,14 @@ const hedvigSerif = Hedvig_Letters_Serif({
 export const metadata: Metadata = {
   title: "CircleFlux - Premium Table Water",
   description: "Our water should be 100% clean & natural. Shop our premium table water.",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
