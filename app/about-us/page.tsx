@@ -1,9 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
+import Modal from "@/components/Modal";
+import ViewportVideo from "@/components/ViewportVideo";
 
 export default function AboutUsPage() {
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-white text-[#1d2428]">
       <Navbar variant="solid" />
@@ -11,7 +18,7 @@ export default function AboutUsPage() {
       <main className="pt-[116px]">
         <section className="relative min-h-[420px] md:min-h-[600px] flex items-center justify-center overflow-hidden text-white">
           <Image
-            src="/images/about-bg.png"
+            src="/images/about-bg.webp"
             alt="Clean water surface"
             fill
             priority
@@ -33,7 +40,7 @@ export default function AboutUsPage() {
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="relative aspect-4/3 md:aspect-square">
               <Image
-                src="/images/bottle.png"
+                src="/images/bottle.webp"
                 alt="CircleFlux bottled water pack"
                 fill
                 className="object-contain"
@@ -50,9 +57,13 @@ export default function AboutUsPage() {
               <p className="font-source-sans text-sm md:text-base leading-relaxed text-white/85 mt-5">
                 What began as a bottled water production initiative soon evolved into a bigger ambition. The founder saw a gap in the industry: most water companies depended heavily on imported packaging materials and limited production capacity. This created high costs and supply inefficiencies.
               </p>
-              <a href="/where-to-buy" className="inline-block mt-6 text-brand-yellow font-overpass text-xs font-black uppercase">
+              <button
+                type="button"
+                onClick={() => setIsStoryModalOpen(true)}
+                className="inline-block mt-6 text-brand-yellow font-overpass text-xs font-black uppercase cursor-pointer hover:opacity-85 transition-opacity"
+              >
                 View more &gt;
-              </a>
+              </button>
             </div>
           </div>
         </section>
@@ -71,7 +82,7 @@ export default function AboutUsPage() {
             <div className="grid grid-cols-1 md:grid-cols-[0.8fr_1.2fr] gap-10 items-start">
               <div className="relative aspect-4/5">
                 <Image
-                  src="/images/about-image-1.png"
+                  src="/images/about-image-1.webp"
                   alt="Clear bottled water"
                   fill
                   className="object-cover"
@@ -104,17 +115,11 @@ export default function AboutUsPage() {
         </section>
 
         <section className="relative min-h-[560px] md:min-h-[680px] flex items-center justify-center overflow-hidden text-white">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster="/images/hero-bg.png"
+          <ViewportVideo
+            src="/videos/hero-video.mp4"
+            poster="/images/hero-bg.webp"
             className="absolute inset-0 w-full h-full object-cover"
-          >
-            <source src="/videos/hero-video.mp4" type="video/mp4" />
-          </video>
+          />
           <div className="absolute inset-0 bg-brand-teal/45" />
           <div className="relative z-10 text-center px-6 max-w-4xl">
             <p className="font-overpass text-lg md:text-xl uppercase tracking-[0.04em] mb-4">
@@ -142,7 +147,7 @@ export default function AboutUsPage() {
           </div>
           <div className="bg-brand-yellow relative min-h-[520px] overflow-hidden">
             <Image
-              src="/images/about-image-2.png"
+              src="/images/about-image-2.webp"
               alt="CircleFlux bottle"
               fill
               className="object-contain scale-125 rotate-12 translate-x-10"
@@ -155,6 +160,21 @@ export default function AboutUsPage() {
       </main>
 
       <Footer />
+
+      <Modal isOpen={isStoryModalOpen} onClose={() => setIsStoryModalOpen(false)} title="Circleflux Story">
+        <p>
+          CircleFlux Nigeria Limited was born out of a vision to solve one of Nigeria’s most persistent challenges — access to safe, affordable drinking water. The founder recognized that despite the country’s vast water resources, many communities still struggle with unreliable public water supply, forcing millions of people to depend on packaged water for daily survival.
+        </p>
+        <p>
+          What began as a bottled water production initiative soon evolved into a bigger ambition. The founder saw a gap in the industry: most water companies depended heavily on imported packaging materials and limited production capacity. This created high costs and supply inefficiencies. Driven by the desire to build a more self-sustaining and competitive enterprise, the idea emerged to reposition CircleFlux into a fully integrated water manufacturing company.
+        </p>
+        <p>
+          The vision expanded beyond bottled water into the production of PET bottles and cap closures, enabling the company to control its entire value chain — from packaging materials to finished products. This strategic shift was also inspired by the growing demand in Nigeria’s fast-expanding bottled water market and the opportunity to create jobs, improve public health, and support economic development.
+        </p>
+        <p>
+          Ultimately, CircleFlux was founded not just as a business, but as a long-term industrial solution — one designed to deliver clean water, reduce dependency on imports, and build a globally competitive Nigerian brand in the water manufacturing industry.
+        </p>
+      </Modal>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default function Footer() {
             <h3 className="font-overpass text-lg md:text-xl font-black uppercase leading-tight max-w-[420px]">
               CARE ABOUT QUALITY WATER THAT MAKES YOU FEEL REFRESHED PACKED WITH ESSENTIAL NUTRIENT, THEN GET CIRCLEFLUX WATER TODAY!
             </h3>
-            <CtaButton href="/where-to-buy" variant="footer" size="md">
+            <CtaButton href="https://wa.link/x16a6c" target="_blank" rel="noopener noreferrer" variant="footer" size="md">
               Place Order
             </CtaButton>
           </div>
@@ -40,12 +40,12 @@ export default function Footer() {
               <Link href="/where-to-buy" className="hover:text-brand-red transition-colors">
                 Contact Us
               </Link>
-              <Link href="#contact" className="hover:text-brand-red transition-colors">
+              {/* <Link href="#contact" className="hover:text-brand-red transition-colors">
                 Privacy Policy
               </Link>
               <Link href="#contact" className="hover:text-brand-red transition-colors">
                 Terms and Condition
-              </Link>
+              </Link> */}
             </div>
           </div>
 
@@ -54,18 +54,28 @@ export default function Footer() {
               Social
             </h4>
             <div className="flex flex-col gap-2 font-source-sans text-sm text-[#1d2428]/75">
-              <a href="#" className="hover:text-brand-red transition-colors">
+              <a
+                href="https://www.instagram.com/circlefluxng?igsh=Mm9jNmZ4cmRrODhh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-brand-red transition-colors"
+              >
                 Instagram
               </a>
-              <a href="#" className="hover:text-brand-red transition-colors">
+              <a
+                href="https://www.facebook.com/share/1BKybNtFny/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-brand-red transition-colors"
+              >
                 Facebook
               </a>
-              <a href="#" className="hover:text-brand-red transition-colors">
+              {/* <a href="#" className="hover:text-brand-red transition-colors">
                 Twitter (X)
               </a>
               <a href="#" className="hover:text-brand-red transition-colors">
                 LinkedIn
-              </a>
+              </a> */}
             </div>
           </div>
 

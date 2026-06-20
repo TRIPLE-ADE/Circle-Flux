@@ -1,6 +1,7 @@
 const ICONS = [
   {
     label: "Instagram",
+    url: "https://www.instagram.com/circlefluxng?igsh=Mm9jNmZ4cmRrODhh",
     icon: (
       <>
         <rect x="5" y="5" width="14" height="14" rx="4" />
@@ -11,10 +12,12 @@ const ICONS = [
   },
   {
     label: "Facebook",
+    url: "https://www.facebook.com/share/1BKybNtFny/",
     icon: <path d="M14 8h-2a2 2 0 0 0-2 2v2H8v3h2v6h3v-6h2.5l.5-3h-3v-1.5c0-.8.3-1.2 1.2-1.2H16V8z" />,
   },
   {
     label: "X",
+    url: "#",
     icon: (
       <>
         <path d="M6 6l12 12" />
@@ -24,6 +27,7 @@ const ICONS = [
   },
   {
     label: "LinkedIn",
+    url: "#",
     icon: (
       <>
         <path d="M7 10v8" />
@@ -46,7 +50,9 @@ export default function SocialFollow() {
         <div className="flex items-center gap-3 bg-white rounded-full px-5 py-3">
           {ICONS.map((item) => (
             <a
-              href="#"
+              href={item.url}
+              target={item.url !== "#" ? "_blank" : undefined}
+              rel={item.url !== "#" ? "noopener noreferrer" : undefined}
               key={item.label}
               aria-label={item.label}
               className="w-7 h-7 rounded-full border border-[#1d2428]/60 text-[#1d2428] flex items-center justify-center hover:bg-brand-yellow transition-colors"

@@ -23,11 +23,39 @@ const FAQS = [
   },
 ];
 
+const LOCATION = "1, Otunba Babalola Street, Off Old Lagos/Abeokuta Road, Akinbo Village, Obafemi Owode, Ogun State, Nigeria";
+const MAP_QUERY = encodeURIComponent(LOCATION);
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "CircleFlux Nigeria Limited",
+  description: "Producer and distributor of premium purified bottled table water in Ogun State, Nigeria.",
+  foundingDate: "2021",
+  email: "circleflux@gmail.com",
+  telephone: "+2348066560964",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1, Otunba Babalola Street, Off Old Lagos/Abeokuta Road, Akinbo Village",
+    addressLocality: "Obafemi Owode",
+    addressRegion: "Ogun State",
+    addressCountry: "NG",
+  },
+  sameAs: [
+    "https://www.instagram.com/circlefluxng",
+    "https://www.facebook.com/share/1BKybNtFny/",
+  ],
+};
+
 export default function WhereToBuyPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <div className="min-h-screen bg-white text-[#1d2428]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
       <Navbar variant="solid" />
 
       <main className="pt-[116px]">
@@ -44,7 +72,7 @@ export default function WhereToBuyPage() {
             </div>
             <div className="relative min-h-[260px] md:min-h-[360px]">
               <Image
-                src="/images/bottle.png"
+                src="/images/bottle.webp"
                 alt="CircleFlux bottled water pack"
                 fill
                 priority
@@ -62,16 +90,26 @@ export default function WhereToBuyPage() {
               <div className="space-y-5 font-overpass">
                 <div>
                   <h3 className="text-2xl font-black">Email</h3>
-                  <p className="text-lg font-semibold mt-2">circleflux@gmail.com</p>
+                  <a
+                    href="mailto:circleflux@gmail.com"
+                    className="inline-block text-lg font-semibold mt-2 underline decoration-brand-cyan/50 underline-offset-4 hover:text-brand-cyan transition-colors"
+                  >
+                    circleflux@gmail.com
+                  </a>
                 </div>
                 <div>
                   <h3 className="text-2xl font-black">Phone Number</h3>
-                  <p className="text-lg font-semibold mt-2">+234 806 656 0964</p>
+                  <a
+                    href="tel:+2348066560964"
+                    className="inline-block text-lg font-semibold mt-2 underline decoration-brand-cyan/50 underline-offset-4 hover:text-brand-cyan transition-colors"
+                  >
+                    +234 806 656 0964
+                  </a>
                 </div>
                 <div>
                   <h3 className="text-2xl font-black">Address</h3>
                   <p className="text-lg font-semibold leading-relaxed mt-2">
-                    1, Otunba Babalola Street, Off Old Lagos/Abeokuta Road, Akinbo Village Obafemi Owode Ogun State.
+                    {LOCATION}
                   </p>
                 </div>
               </div>
@@ -99,9 +137,20 @@ export default function WhereToBuyPage() {
                 className="w-full h-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps?q=Abeokuta%20Ogun%20State%20Nigeria&output=embed"
+                src={`https://www.google.com/maps?q=${MAP_QUERY}&output=embed`}
               />
             </div>
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${MAP_QUERY}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 min-h-12 inline-flex items-center justify-center gap-2 rounded-full bg-brand-red px-7 py-3 font-overpass text-sm font-black uppercase text-white shadow-[6px_6px_0_#00a5ec] transition-transform hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1"
+            >
+              Get directions
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </a>
           </div>
         </section>
 
@@ -118,13 +167,21 @@ export default function WhereToBuyPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    aria-expanded={openFaq === index}
+                    aria-controls={`faq-answer-${index}`}
+                    id={`faq-question-${index}`}
                     className="w-full bg-brand-cyan text-white font-overpass text-sm md:text-base font-black px-5 py-4 flex items-center justify-between gap-4"
                   >
                     <span>{faq.question}</span>
-                    <span className="text-2xl leading-none">{openFaq === index ? "-" : "+"}</span>
+                    <span className="text-2xl leading-none" aria-hidden="true">{openFaq === index ? "-" : "+"}</span>
                   </button>
                   {openFaq === index ? (
-                    <div className="bg-[#eaf8fd] px-5 py-4 font-source-sans text-sm md:text-base text-[#526064] leading-relaxed">
+                    <div
+                      id={`faq-answer-${index}`}
+                      role="region"
+                      aria-labelledby={`faq-question-${index}`}
+                      className="bg-[#eaf8fd] px-5 py-4 font-source-sans text-sm md:text-base text-[#526064] leading-relaxed"
+                    >
                       {faq.answer}
                     </div>
                   ) : null}

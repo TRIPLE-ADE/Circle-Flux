@@ -4,20 +4,20 @@ import CtaButton from "./CtaButton";
 const PRODUCTS = [
   {
     id: 1,
-    size: "15cl Pack",
-    badge: "SALE",
+    size: "50cl Case Pack",
+    orderMessage: "Hello CircleFlux, I would like to order the 50cl case pack.",
     image: "/images/bottle-pack.png",
   },
   {
     id: 2,
-    size: "50cl Pack",
-    badge: "SALE",
+    size: "75cl Case Pack",
+    orderMessage: "Hello CircleFlux, I would like to order the 75cl case pack.",
     image: "/images/bottle-pack.png",
   },
   {
     id: 3,
-    size: "75cl Pack",
-    badge: "SALE",
+    size: "1.5L Case Pack",
+    orderMessage: "Hello CircleFlux, I would like to order the 1.5L case pack.",
     image: "/images/bottle-pack.png",
   },
 ];
@@ -57,8 +57,13 @@ export default function BestSellers() {
                 </div>
               </div>
 
-              <CtaButton size="md">
-                Order Now
+              <CtaButton
+                size="md"
+                href={`https://wa.me/2348066560964?text=${encodeURIComponent(prod.orderMessage)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Order {prod.size.replace(" Case Pack", "")}
               </CtaButton>
             </div>
           ))}

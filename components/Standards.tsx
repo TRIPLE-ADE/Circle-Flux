@@ -27,7 +27,7 @@ export default function Standards() {
         <div className="md:col-span-5 flex justify-center md:justify-end z-10 w-full self-end">
           <div className="relative w-full max-w-[390px] aspect-3/4 md:-mb-1">
             <Image
-              src="/images/standards-bg.png"
+              src="/images/standards-bg.webp"
               alt="Happy person drinking clean bottle water"
               fill
               className="object-cover object-top"

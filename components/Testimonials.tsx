@@ -1,11 +1,19 @@
 "use client";
 
-import type { CSSProperties} from "react";
-import { TransitionEvent, useCallback, useState, useEffect } from "react";
+import {
+  type CSSProperties,
+  type FocusEvent,
+  type TransitionEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
-const SLIDE_MS = 900;
-const SLIDE_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-const CARD_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const SLIDE_MS = 700;
+const SLIDE_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const CLONE_COUNT = 2;
 const TESTIMONIALS = [
   {
     id: 0,
@@ -39,101 +47,126 @@ const TESTIMONIALS = [
   },
 ];
 
+const EXTENDED_TESTIMONIALS = [
+  ...TESTIMONIALS.slice(-CLONE_COUNT),
+  ...TESTIMONIALS,
+  ...TESTIMONIALS.slice(0, CLONE_COUNT),
+];
+
+const subscribeToMobileViewport = (callback: () => void) => {
+  const query = window.matchMedia("(max-width: 639px)");
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+};
+
+const getMobileViewportSnapshot = () => window.matchMedia("(max-width: 639px)").matches;
+const subscribeToReducedMotion = (callback: () => void) => {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+};
+const getReducedMotionSnapshot = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const normalizeVirtualIndex = (index: number) => {
+  if (index >= TESTIMONIALS.length + CLONE_COUNT) return index - TESTIMONIALS.length;
+  if (index < CLONE_COUNT) return index + TESTIMONIALS.length;
+  return index;
+};
+
 export default function Testimonials() {
+  const isMobile = useSyncExternalStore(subscribeToMobileViewport, getMobileViewportSnapshot, () => false);
+  const prefersReducedMotion = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false);
+  const dimensions = isMobile ? { cardWidth: 280, gap: 16 } : { cardWidth: 520, gap: 24 };
 
-  const K = 2; // Clone padding count on each side
-
-  // Build the extended list dynamically to support any testimonials list from backend
-  const extendedTestimonials = [
-    ...TESTIMONIALS.slice(-K),
-    ...TESTIMONIALS,
-    ...TESTIMONIALS.slice(0, K),
-  ];
-
-  const [virtualIndex, setVirtualIndex] = useState(K + 1); // Start at the second real element (Patricia)
+  const [virtualIndex, setVirtualIndex] = useState(CLONE_COUNT + 1);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [dimensions, setDimensions] = useState({ cardWidth: 520, gap: 24 });
+  const [isUserPaused, setIsUserPaused] = useState(false);
+  const [isInteractionPaused, setIsInteractionPaused] = useState(false);
+  const transitionLockRef = useRef(false);
 
-  const getRealIndex = (index: number) => {
-    return (index - K + TESTIMONIALS.length) % TESTIMONIALS.length;
-  };
-
+  const getRealIndex = (index: number) =>
+    (index - CLONE_COUNT + TESTIMONIALS.length) % TESTIMONIALS.length;
   const activeIndex = getRealIndex(virtualIndex);
 
-  // Responsive layout tracking
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (window.innerWidth < 640) {
-        setDimensions({ cardWidth: 280, gap: 16 });
-      } else {
-        setDimensions({ cardWidth: 520, gap: 24 });
-      }
-    };
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
+  const moveBy = useCallback((amount: number) => {
+    if (transitionLockRef.current) return;
 
-  const moveLeft = useCallback(() => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTransitionEnabled(true);
-    setVirtualIndex((prev) => prev + 1);
-  }, [isTransitioning]);
-
-  const moveRight = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTransitionEnabled(true);
-    setVirtualIndex((prev) => prev - 1);
-  };
-
-  const handleDotClick = (idx: number) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTransitionEnabled(true);
-    setVirtualIndex(idx + K);
-  };
-
-  const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget || event.propertyName !== "transform") {
+    if (prefersReducedMotion) {
+      setVirtualIndex((current) => normalizeVirtualIndex(current + amount));
       return;
     }
 
-    setIsTransitioning(false);
+    transitionLockRef.current = true;
+    setTransitionEnabled(true);
+    setVirtualIndex((current) => current + amount);
+  }, [prefersReducedMotion]);
 
-    if (virtualIndex >= TESTIMONIALS.length + K) {
-      setTransitionEnabled(false);
-      setVirtualIndex((prev) => prev - TESTIMONIALS.length);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setTransitionEnabled(true));
-      });
-    } else if (virtualIndex < K) {
-      setTransitionEnabled(false);
-      setVirtualIndex((prev) => prev + TESTIMONIALS.length);
-        requestAnimationFrame(() => {
-        requestAnimationFrame(() => setTransitionEnabled(true));
-      });
+  const moveTo = (nextIndex: number) => {
+    if (transitionLockRef.current || nextIndex === virtualIndex) return;
+
+    if (prefersReducedMotion) {
+      setVirtualIndex(normalizeVirtualIndex(nextIndex));
+      return;
     }
+
+    transitionLockRef.current = true;
+    setTransitionEnabled(true);
+    setVirtualIndex(nextIndex);
   };
 
-  // Auto-slide effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      moveLeft();
-    }, 6000);
+  const handleDotClick = (realIndex: number) => {
+    const baseIndex = realIndex + CLONE_COUNT;
+    const nearestIndex = [baseIndex - TESTIMONIALS.length, baseIndex, baseIndex + TESTIMONIALS.length]
+      .filter((index) => index >= 0 && index < EXTENDED_TESTIMONIALS.length)
+      .reduce((nearest, index) =>
+        Math.abs(index - virtualIndex) < Math.abs(nearest - virtualIndex) ? index : nearest
+      );
+    moveTo(nearestIndex);
+  };
 
-    return () => clearInterval(timer);
-  }, [moveLeft]);
+  const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget || event.propertyName !== "transform") return;
+
+    const normalizedIndex = normalizeVirtualIndex(virtualIndex);
+    if (normalizedIndex === virtualIndex) {
+      transitionLockRef.current = false;
+      return;
+    }
+
+    setTransitionEnabled(false);
+    setVirtualIndex(normalizedIndex);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTransitionEnabled(true);
+        transitionLockRef.current = false;
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (isUserPaused || isInteractionPaused || prefersReducedMotion) return;
+    const timer = window.setInterval(() => moveBy(1), 6000);
+    return () => window.clearInterval(timer);
+  }, [isInteractionPaused, isUserPaused, moveBy, prefersReducedMotion]);
+
+  const handleBlur = (event: FocusEvent<HTMLElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      setIsInteractionPaused(false);
+    }
+  };
 
   return (
     <section
       data-testid="testimonials"
+      aria-roledescription="carousel"
+      aria-label="Customer testimonials"
+      onMouseEnter={() => setIsInteractionPaused(true)}
+      onMouseLeave={() => setIsInteractionPaused(false)}
+      onFocusCapture={() => setIsInteractionPaused(true)}
+      onBlurCapture={handleBlur}
       className="py-16 md:py-20 px-4 sm:px-6 md:px-12 bg-white text-[#1d2428] relative overflow-hidden z-20"
     >
       <div className="max-w-6xl mx-auto">
-
         <div className="text-center mb-11">
           <span className="text-[10px] font-black uppercase tracking-[0.04em] font-overpass block mb-7">
             Customer Reviews
@@ -143,25 +176,29 @@ export default function Testimonials() {
           </h2>
         </div>
 
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          Testimonial {activeIndex + 1} of {TESTIMONIALS.length}: {TESTIMONIALS[activeIndex].author}
+        </p>
+
         <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
           <button
             type="button"
-            onClick={moveLeft}
+            onClick={() => moveBy(1)}
             aria-label="Move testimonials left"
-            className="absolute left-5 sm:left-8 z-30 w-12 h-12 rounded-full bg-white/75 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-300"
+            className="absolute left-5 sm:left-8 z-30 w-12 h-12 rounded-full bg-white/90 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-transform duration-200"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
           <button
             type="button"
-            onClick={moveRight}
+            onClick={() => moveBy(-1)}
             aria-label="Move testimonials right"
-            className="absolute right-5 sm:right-8 z-30 w-12 h-12 rounded-full bg-white/75 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-300"
+            className="absolute right-5 sm:right-8 z-30 w-12 h-12 rounded-full bg-white/90 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-transform duration-200"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -173,50 +210,51 @@ export default function Testimonials() {
               className="relative flex"
               style={{
                 left: "50%",
-                transform: `translate3d(-${(virtualIndex * (dimensions.cardWidth + dimensions.gap)) + dimensions.cardWidth / 2}px, 0, 0)`,
-                transition: transitionEnabled ? `transform ${SLIDE_MS}ms ${SLIDE_EASE}` : "none",
-                width: `${extendedTestimonials.length * (dimensions.cardWidth + dimensions.gap)}px`,
+                transform: `translate3d(-${virtualIndex * (dimensions.cardWidth + dimensions.gap) + dimensions.cardWidth / 2}px, 0, 0)`,
+                transition: transitionEnabled && !prefersReducedMotion
+                  ? `transform ${SLIDE_MS}ms ${SLIDE_EASE}`
+                  : "none",
+                width: `${EXTENDED_TESTIMONIALS.length * dimensions.cardWidth + (EXTENDED_TESTIMONIALS.length - 1) * dimensions.gap}px`,
                 gap: `${dimensions.gap}px`,
                 willChange: "transform",
                 backfaceVisibility: "hidden",
               }}
             >
-              {extendedTestimonials.map((test, idx) => {
-                const isActive = getRealIndex(idx) === activeIndex;
+              {EXTENDED_TESTIMONIALS.map((testimonial, index) => {
+                const isActive = getRealIndex(index) === activeIndex;
                 const cardStyle: CSSProperties = {
                   width: `${dimensions.cardWidth}px`,
-                  backgroundColor: isActive ? "#14aee5" : undefined,
+                  backgroundColor: isActive ? "#14aee5" : "#f2b705",
                   boxShadow: isActive
                     ? "0 22px 42px rgba(20, 174, 229, 0.18)"
-                    : "0 10px 24px rgba(242, 189, 29, 0.12)",
-                  transition: `background-color ${SLIDE_MS}ms ${CARD_EASE}, box-shadow ${SLIDE_MS}ms ${CARD_EASE}, transform ${SLIDE_MS}ms ${CARD_EASE}`,
+                    : "0 10px 24px rgba(242, 183, 5, 0.12)",
+                  transform: isActive ? "scale(1)" : "scale(0.94)",
+                  transition: prefersReducedMotion
+                    ? "none"
+                    : `background-color ${SLIDE_MS}ms ${SLIDE_EASE}, box-shadow ${SLIDE_MS}ms ${SLIDE_EASE}, transform ${SLIDE_MS}ms ${SLIDE_EASE}`,
                 };
 
                 return (
-                  <div
+                  <article
                     data-testid="testimonial-card"
                     data-active={isActive ? "true" : "false"}
-                    key={`${test.id}-${idx}`}
-                    onClick={() => {
-                      if (!isActive && !isTransitioning) {
-                        setVirtualIndex(idx);
-                      }
-                    }}
+                    aria-hidden={index !== virtualIndex}
+                    key={`${testimonial.id}-${index}`}
+                    onClick={() => !isActive && moveTo(index)}
                     style={cardStyle}
-                    className={`shrink-0 overflow-hidden rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center text-[#1d2428] bg-brand-yellow border border-white/30 ${
-                      isActive
-                        ? "scale-100 z-10"
-                        : "scale-[0.94] cursor-pointer"
+                    className={`shrink-0 overflow-hidden rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center text-[#1d2428] border border-white/30 ${
+                      isActive ? "z-10" : "cursor-pointer"
                     }`}
                   >
                     <div>
-                      <div className="flex gap-1 justify-center mb-5">
-                        {[...Array(5)].map((_, i) => (
+                      <div className="flex gap-1 justify-center mb-5" aria-hidden="true">
+                        {[...Array(5)].map((_, starIndex) => (
                           <svg
-                            key={i}
+                            key={starIndex}
                             style={{
-                              color: isActive ? "#F2B705" : "#14aee5",
-                              fill: isActive ? "#F2B705" : "#14aee5",
+                              color: isActive ? "#f2b705" : "#14aee5",
+                              fill: isActive ? "#f2b705" : "#14aee5",
+                              transition: prefersReducedMotion ? "none" : `color ${SLIDE_MS}ms ${SLIDE_EASE}, fill ${SLIDE_MS}ms ${SLIDE_EASE}`,
                             }}
                             className="w-4 h-4"
                             viewBox="0 0 20 20"
@@ -225,41 +263,45 @@ export default function Testimonials() {
                           </svg>
                         ))}
                       </div>
-
                       <p className="font-overpass text-sm sm:text-base md:text-lg leading-relaxed font-black text-[#1d2428]">
-                        &ldquo;{test.quote}&rdquo;
+                        &ldquo;{testimonial.quote}&rdquo;
                       </p>
                     </div>
-
                     <div className="mt-5">
-                      <h4 className="font-overpass font-black text-[10px] text-[#1d2428]">
-                        {test.author}
-                      </h4>
-                      <p className="font-source-sans text-[10px] font-semibold text-[#1d2428]/65">
-                        {test.role}
-                      </p>
+                      <h3 className="font-overpass font-black text-[10px] text-[#1d2428]">{testimonial.author}</h3>
+                      <p className="font-source-sans text-[10px] font-semibold text-[#1d2428]/65">{testimonial.role}</p>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
           </div>
-
         </div>
 
-        <div className="flex justify-center gap-2.5 mt-5">
-          {TESTIMONIALS.map((t, idx) => (
+        <div className="flex justify-center items-center gap-2.5 mt-5">
+          {TESTIMONIALS.map((testimonial, index) => (
             <button
               type="button"
-              key={t.id}
-              onClick={() => handleDotClick(idx)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === activeIndex ? "bg-brand-red" : "bg-[#eff2f9]"
-                }`}
-              aria-label={`Go to testimonial ${idx + 1}`}
+              key={testimonial.id}
+              onClick={() => handleDotClick(index)}
+              className={`w-3 h-3 rounded-full transition-colors duration-300 ${index === activeIndex ? "bg-brand-red" : "bg-[#dfe4ea]"}`}
+              aria-label={`Go to testimonial ${index + 1}`}
+              aria-current={index === activeIndex ? "true" : undefined}
             />
           ))}
+          <button
+            type="button"
+            onClick={() => setIsUserPaused((paused) => !paused)}
+            className="ml-3 w-8 h-8 rounded-full border border-[#1d2428]/20 flex items-center justify-center text-[#1d2428] hover:bg-brand-pink transition-colors"
+            aria-label={isUserPaused ? "Resume testimonial autoplay" : "Pause testimonial autoplay"}
+          >
+            {isUserPaused ? (
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            ) : (
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z" /></svg>
+            )}
+          </button>
         </div>
-
       </div>
     </section>
   );

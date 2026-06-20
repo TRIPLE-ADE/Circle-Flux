@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -27,6 +27,8 @@ export default function Navbar({
   const [isScrolled, setIsScrolled] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerCloseButtonRef = useRef<HTMLButtonElement>(null);
 
   useLayoutEffect(() => {
     const handleScroll = () => {
@@ -44,6 +46,26 @@ export default function Navbar({
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const menuButton = menuButtonRef.current;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsMobileMenuOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+    drawerCloseButtonRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+      menuButton?.focus();
+    };
+  }, [isMobileMenuOpen]);
 
   const closeMenu = () => setIsMobileMenuOpen(false);
 
@@ -135,7 +157,7 @@ export default function Navbar({
         {/* Right Side: CTA + Mobile Toggle */}
         <div className="flex items-center gap-4 md:gap-5 font-overpass text-base font-black uppercase">
           <Link
-            href="https://wa.me/2348000000000"
+            href="https://wa.link/x16a6c"
             target="_blank"
             rel="noopener noreferrer"
             className={`hidden sm:inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-black uppercase transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 ${ctaClass}`}
@@ -153,8 +175,11 @@ export default function Navbar({
 
           {/* Mobile Menu Button */}
           <button
+            ref={menuButtonRef}
             type="button"
-            aria-label="Toggle menu"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-controls="mobile-navigation"
+            aria-expanded={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`md:hidden p-2 rounded-full transition-colors ${menuToggleHover}`}
           >
@@ -193,6 +218,7 @@ export default function Navbar({
 
       {/* Backdrop (mobile) */}
       <div
+        aria-hidden="true"
         onClick={closeMenu}
         className={`fixed inset-0 bg-black/50 transition-opacity duration-300 md:hidden ${
           isMobileMenuOpen
@@ -203,10 +229,27 @@ export default function Navbar({
 
       {/* Mobile Drawer */}
       <div
+        id="mobile-navigation"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation"
+        aria-hidden={!isMobileMenuOpen}
+        inert={!isMobileMenuOpen}
         className={`fixed top-0 right-0 h-screen w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-out md:hidden ${
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          isMobileMenuOpen ? "visible translate-x-0" : "invisible translate-x-full"
         }`}
       >
+        <button
+          ref={drawerCloseButtonRef}
+          type="button"
+          onClick={closeMenu}
+          aria-label="Close menu"
+          className="absolute right-5 top-5 p-2 rounded-full text-brand-teal hover:bg-black/5 transition-colors"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         <div className="flex flex-col gap-6 pt-24 px-6 text-brand-teal font-overpass font-bold uppercase">
           <Link
             href="/"
@@ -231,7 +274,7 @@ export default function Navbar({
           </Link>
 
           <Link
-            href="https://wa.me/2348000000000"
+            href="https://wa.link/x16a6c"
             target="_blank"
             rel="noopener noreferrer"
             onClick={closeMenu}

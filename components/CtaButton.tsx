@@ -7,6 +7,8 @@ type CtaButtonProps = {
   variant?: "default" | "footer";
   size?: "sm" | "md";
   className?: string;
+  target?: string;
+  rel?: string;
 };
 
 export default function CtaButton({
@@ -15,6 +17,8 @@ export default function CtaButton({
   variant = "default",
   size = "sm",
   className = "",
+  target,
+  rel,
 }: CtaButtonProps) {
   const offsetColor = variant === "footer" ? "bg-[#ff6a45]" : "bg-brand-yellow";
   const sizeClass = size === "md" ? "px-9 py-4 text-sm" : "px-6 py-3 text-[10px]";
@@ -43,7 +47,7 @@ export default function CtaButton({
 
   if (href) {
     return (
-      <Link href={href} className={`group ${baseClass}`}>
+      <Link href={href} target={target} rel={rel} className={`group ${baseClass}`}>
         {content}
       </Link>
     );
