@@ -7,7 +7,7 @@ export default function Hero() {
   return (
     <section
       aria-label="Hero section introducing premium table water brand"
-      className="relative w-full h-[95vh] flex items-center justify-center overflow-hidden"
+      className="relative w-full min-h-[95vh] flex items-center justify-center pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden"
     >
       {/* Background Video — GPU-composited layer to prevent scroll jank */}
       <ViewportVideo
@@ -19,7 +19,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-linear-to-b from-black/45 via-brand-teal/25 to-brand-teal/70 z-10" />
       <div className="absolute inset-0 bg-black/15 z-10" />
       {/* Hero Content */}
-      <div className="relative z-20 text-center flex flex-col items-center px-4 max-w-6xl mt-16 md:mt-24">
+      <div className="relative z-20 text-center flex flex-col items-center px-4 max-w-6xl">
         {/* Title */}
         <h1 className="font-hedvig text-5xl md:text-8xl lg:text-[104px] text-white font-normal leading-[1.03] tracking-normal drop-shadow-lg select-none animate-slide-up">
           Premium Table Water
