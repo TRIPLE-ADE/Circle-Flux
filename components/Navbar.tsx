@@ -106,7 +106,12 @@ export default function Navbar({
   return (
     <header className={headerClass}>
       {/* Top Announcement Bar */}
-      <div className="w-full bg-brand-yellow text-brand-teal text-center py-2 px-4 text-xs md:text-sm font-semibold tracking-wide font-overpass flex justify-center items-center gap-1 shadow-sm">
+      <Link
+        href="https://wa.link/x16a6c"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full bg-brand-yellow text-brand-teal text-center py-2 px-4 text-xs md:text-sm font-semibold tracking-wide font-overpass flex justify-center items-center gap-1 shadow-sm hover:bg-[#e2aa04] transition-colors duration-200 cursor-pointer block"
+      >
         <span>We&apos;re Available To Take Your Order</span>
         <svg
           className="w-4 h-4"
@@ -122,7 +127,7 @@ export default function Navbar({
             d="M9 5l7 7-7 7"
           />
         </svg>
-      </div>
+      </Link>
 
       {/* Main Navbar */}
       <nav className={navClass}>
