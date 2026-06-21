@@ -145,7 +145,7 @@ export default function Testimonials() {
 
   useEffect(() => {
     if (isUserPaused || isInteractionPaused || prefersReducedMotion) return;
-    const timer = window.setInterval(() => moveBy(1), 6000);
+    const timer = window.setInterval(() => moveBy(1), 3000);
     return () => window.clearInterval(timer);
   }, [isInteractionPaused, isUserPaused, moveBy, prefersReducedMotion]);
 

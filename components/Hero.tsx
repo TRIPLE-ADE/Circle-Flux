@@ -7,7 +7,7 @@ export default function Hero() {
   return (
     <section
       aria-label="Hero section introducing premium table water brand"
-      className="relative w-full min-h-[95vh] flex items-center justify-center pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden"
+      className="relative w-full min-h-[95vh] flex items-center justify-center pt-24 pb-16 md:pt-32 md:pb-32 overflow-hidden"
     >
       {/* Background Video — GPU-composited layer to prevent scroll jank */}
       <ViewportVideo
