@@ -106,7 +106,7 @@ export default function Testimonials() {
           <span className="mb-7 block font-overpass text-[10px] font-black uppercase tracking-[0.04em]">
             Customer Reviews
           </span>
-          <h2 className="mx-auto max-w-xl font-overpass text-2xl font-black leading-tight md:text-[34px]">
+          <h2 className="mx-auto max-w-2xl font-overpass text-2xl font-black leading-tight md:text-[34px]">
             Hear what people are saying about us
           </h2>
         </div>
@@ -139,46 +139,50 @@ export default function Testimonials() {
           </button>
 
           <div ref={viewportRef} className="overflow-hidden px-2 py-5" data-testid="testimonial-viewport">
-            <div className="flex touch-pan-y gap-4 sm:gap-6">
+            <div className="-ml-4 flex touch-pan-y sm:-ml-6">
               {TESTIMONIALS.map((testimonial, index) => {
                 const isSelected = index === selectedIndex;
                 return (
-                  <article
+                  <div
                     key={testimonial.attribution}
-                    data-testid="testimonial-card"
-                    data-active={isSelected ? "true" : "false"}
                     aria-hidden={!isSelected}
-                    onClick={() => !isSelected && scrollTo(index)}
-                    className={`flex min-h-[230px] w-[280px] shrink-0 flex-col justify-center overflow-hidden rounded-lg border border-white/30 p-7 text-center text-[#1d2428] will-change-transform sm:w-[520px] sm:p-9 ${
-                      prefersReducedMotion
-                        ? ""
-                        : "transition-[background-color,box-shadow,transform] duration-500 ease-out"
-                    } ${
-                      isSelected
-                        ? "relative z-10 scale-100 bg-brand-cyan shadow-[0_22px_42px_rgba(0,165,236,0.18)]"
-                        : "scale-[0.94] cursor-pointer bg-brand-yellow shadow-[0_10px_24px_rgba(242,183,5,0.12)]"
-                    }`}
+                    className="flex w-[296px] shrink-0 pl-4 sm:w-[544px] sm:pl-6"
                   >
-                    <div>
-                      <div className="mb-5 flex justify-center gap-1" aria-hidden="true">
-                        {[...Array(5)].map((_, starIndex) => (
-                          <svg
-                            key={starIndex}
-                            className={`h-4 w-4 transition-colors duration-500 ${isSelected ? "fill-brand-yellow text-brand-yellow" : "fill-brand-cyan text-brand-cyan"}`}
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
+                    <article
+                      data-testid="testimonial-card"
+                      data-active={isSelected ? "true" : "false"}
+                      onClick={() => !isSelected && scrollTo(index)}
+                      className={`flex min-h-[288px] w-full flex-col justify-center overflow-hidden rounded-lg border border-white/30 p-7 text-center text-[#1d2428] will-change-transform sm:p-9 ${
+                        prefersReducedMotion
+                          ? ""
+                          : "transition-[background-color,box-shadow,transform] duration-500 ease-out"
+                      } ${
+                        isSelected
+                          ? "relative z-10 scale-100 bg-brand-cyan shadow-[0_22px_42px_rgba(0,165,236,0.18)]"
+                          : "scale-[0.94] cursor-pointer bg-brand-yellow shadow-[0_10px_24px_rgba(242,183,5,0.12)]"
+                      }`}
+                    >
+                      <div>
+                        <div className="mb-5 flex justify-center gap-1" aria-hidden="true">
+                          {[...Array(5)].map((_, starIndex) => (
+                            <svg
+                              key={starIndex}
+                              className={`h-4 w-4 transition-colors duration-500 ${isSelected ? "fill-brand-yellow text-brand-yellow" : "fill-brand-cyan text-brand-cyan"}`}
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <p className="font-overpass text-sm font-black leading-relaxed text-[#1d2428] sm:text-base md:text-lg">
+                          &ldquo;{testimonial.quote}&rdquo;
+                        </p>
                       </div>
-                      <p className="font-overpass text-sm font-black leading-relaxed text-[#1d2428] sm:text-base md:text-lg">
-                        &ldquo;{testimonial.quote}&rdquo;
-                      </p>
-                    </div>
-                    <div className="mt-5">
-                      <h3 className="font-overpass text-[10px] font-black text-[#1d2428]">{testimonial.attribution}</h3>
-                    </div>
-                  </article>
+                      <div className="mt-5">
+                        <h3 className="font-overpass text-[10px] font-black text-[#1d2428]">{testimonial.attribution}</h3>
+                      </div>
+                    </article>
+                  </div>
                 );
               })}
             </div>
