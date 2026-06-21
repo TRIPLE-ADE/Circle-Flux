@@ -1,158 +1,97 @@
 "use client";
 
-import {
-  type CSSProperties,
-  type FocusEvent,
-  type TransitionEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
-const SLIDE_MS = 700;
-const SLIDE_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
-const CLONE_COUNT = 2;
 const TESTIMONIALS = [
   {
-    id: 0,
-    quote: "CircleFlux has been our primary table water supplier for over 2 years. Their delivery is always on time, and our customers frequently comment on how fresh the water tastes.",
-    author: "Emeka Obi",
-    role: "Supermarket Owner",
+    quote: "CircleFlux Water consistently delivers the quality our customers expect. The purity, taste, and reliable supply have made it one of the most trusted products in our stores.",
+    attribution: "Retail Distributor, Lagos",
   },
   {
-    id: 1,
-    quote: "We have used Circleflux Water for several corporate and social events, and the feedback is always positive. The packaging is premium, and the quality is exceptional.",
-    author: "Patricia Adebayo",
-    role: "Operations Manager",
+    quote: "We have used CircleFlux Water for several corporate and social events, and the feedback is always positive. The packaging is premium, and the quality is exceptional.",
+    attribution: "Event Planner, Abuja",
   },
   {
-    id: 2,
-    quote: "Outstanding water quality! I love the modern, premium look of the bottles. It makes a statement at our events and matches our brand aesthetic perfectly.",
-    author: "Funke Balogun",
-    role: "Event Planner",
+    quote: "Clean drinking water is essential for healthy living, and CircleFlux delivers exactly that. It's refreshing, reliable, and a brand I confidently recommend to my clients.",
+    attribution: "Health & Wellness Consultant",
   },
   {
-    id: 3,
-    quote: "As a health coach, hydration is key for my clients. CircleFlux offers the most balanced natural mineral taste in the market. Absolute purity in every pack.",
-    author: "Sarah Alao",
-    role: "Fitness & Wellness Coach",
-  },
-  {
-    id: 4,
-    quote: "Fantastic customer support and seamless wholesale orders. They handled our emergency order of 200 cases for our convention within 24 hours without delay.",
-    author: "Tunde Bakare",
-    role: "Logistics Coordinator",
+    quote: "What stands out about CircleFlux is their commitment to quality and customer satisfaction. Every delivery arrives on time, and the product quality remains consistently excellent.",
+    attribution: "Business owner, Ogun State",
   },
 ];
 
-const EXTENDED_TESTIMONIALS = [
-  ...TESTIMONIALS.slice(-CLONE_COUNT),
-  ...TESTIMONIALS,
-  ...TESTIMONIALS.slice(0, CLONE_COUNT),
-];
-
-const subscribeToMobileViewport = (callback: () => void) => {
-  const query = window.matchMedia("(max-width: 639px)");
-  query.addEventListener("change", callback);
-  return () => query.removeEventListener("change", callback);
-};
-
-const getMobileViewportSnapshot = () => window.matchMedia("(max-width: 639px)").matches;
 const subscribeToReducedMotion = (callback: () => void) => {
   const query = window.matchMedia("(prefers-reduced-motion: reduce)");
   query.addEventListener("change", callback);
   return () => query.removeEventListener("change", callback);
 };
+
 const getReducedMotionSnapshot = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const normalizeVirtualIndex = (index: number) => {
-  if (index >= TESTIMONIALS.length + CLONE_COUNT) return index - TESTIMONIALS.length;
-  if (index < CLONE_COUNT) return index + TESTIMONIALS.length;
-  return index;
-};
-
 export default function Testimonials() {
-  const isMobile = useSyncExternalStore(subscribeToMobileViewport, getMobileViewportSnapshot, () => false);
-  const prefersReducedMotion = useSyncExternalStore(subscribeToReducedMotion, getReducedMotionSnapshot, () => false);
-  const dimensions = isMobile ? { cardWidth: 280, gap: 16 } : { cardWidth: 520, gap: 24 };
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    () => false
+  );
+  const [autoplay] = useState(() =>
+    Autoplay({
+      delay: 6000,
+      playOnInit: true,
+      stopOnFocusIn: true,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+    })
+  );
+  const [viewportRef, emblaApi] = useEmblaCarousel(
+    {
+      align: "center",
+      containScroll: false,
+      duration: prefersReducedMotion ? 0 : 32,
+      loop: true,
+      skipSnaps: false,
+      startIndex: 1,
+    },
+    [autoplay]
+  );
+  const [selectedIndex, setSelectedIndex] = useState(1);
 
-  const [virtualIndex, setVirtualIndex] = useState(CLONE_COUNT + 1);
-  const [transitionEnabled, setTransitionEnabled] = useState(true);
-  const [isUserPaused, setIsUserPaused] = useState(false);
-  const [isInteractionPaused, setIsInteractionPaused] = useState(false);
-  const transitionLockRef = useRef(false);
-
-  const getRealIndex = (index: number) =>
-    (index - CLONE_COUNT + TESTIMONIALS.length) % TESTIMONIALS.length;
-  const activeIndex = getRealIndex(virtualIndex);
-
-  const moveBy = useCallback((amount: number) => {
-    if (transitionLockRef.current) return;
-
-    if (prefersReducedMotion) {
-      setVirtualIndex((current) => normalizeVirtualIndex(current + amount));
-      return;
-    }
-
-    transitionLockRef.current = true;
-    setTransitionEnabled(true);
-    setVirtualIndex((current) => current + amount);
-  }, [prefersReducedMotion]);
-
-  const moveTo = (nextIndex: number) => {
-    if (transitionLockRef.current || nextIndex === virtualIndex) return;
-
-    if (prefersReducedMotion) {
-      setVirtualIndex(normalizeVirtualIndex(nextIndex));
-      return;
-    }
-
-    transitionLockRef.current = true;
-    setTransitionEnabled(true);
-    setVirtualIndex(nextIndex);
-  };
-
-  const handleDotClick = (realIndex: number) => {
-    const baseIndex = realIndex + CLONE_COUNT;
-    const nearestIndex = [baseIndex - TESTIMONIALS.length, baseIndex, baseIndex + TESTIMONIALS.length]
-      .filter((index) => index >= 0 && index < EXTENDED_TESTIMONIALS.length)
-      .reduce((nearest, index) =>
-        Math.abs(index - virtualIndex) < Math.abs(nearest - virtualIndex) ? index : nearest
-      );
-    moveTo(nearestIndex);
-  };
-
-  const handleTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget || event.propertyName !== "transform") return;
-
-    const normalizedIndex = normalizeVirtualIndex(virtualIndex);
-    if (normalizedIndex === virtualIndex) {
-      transitionLockRef.current = false;
-      return;
-    }
-
-    setTransitionEnabled(false);
-    setVirtualIndex(normalizedIndex);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setTransitionEnabled(true);
-        transitionLockRef.current = false;
-      });
-    });
-  };
+  const syncSelectedIndex = useCallback(() => {
+    if (emblaApi) setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
   useEffect(() => {
-    if (isUserPaused || isInteractionPaused || prefersReducedMotion) return;
-    const timer = window.setInterval(() => moveBy(1), 3000);
-    return () => window.clearInterval(timer);
-  }, [isInteractionPaused, isUserPaused, moveBy, prefersReducedMotion]);
+    if (!emblaApi) return;
+    emblaApi.on("select", syncSelectedIndex);
+    emblaApi.on("reInit", syncSelectedIndex);
+    return () => {
+      emblaApi.off("select", syncSelectedIndex);
+      emblaApi.off("reInit", syncSelectedIndex);
+    };
+  }, [emblaApi, syncSelectedIndex]);
 
-  const handleBlur = (event: FocusEvent<HTMLElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-      setIsInteractionPaused(false);
-    }
+  useEffect(() => {
+    if (!emblaApi) return;
+    if (prefersReducedMotion) autoplay.stop();
+    else autoplay.play();
+  }, [autoplay, emblaApi, prefersReducedMotion]);
+
+  const scrollLeft = () => {
+    emblaApi?.scrollNext();
+    autoplay.reset();
+  };
+
+  const scrollRight = () => {
+    emblaApi?.scrollPrev();
+    autoplay.reset();
+  };
+
+  const scrollTo = (index: number) => {
+    emblaApi?.scrollTo(index);
+    autoplay.reset();
   };
 
   return (
@@ -160,116 +99,84 @@ export default function Testimonials() {
       data-testid="testimonials"
       aria-roledescription="carousel"
       aria-label="Customer testimonials"
-      onMouseEnter={() => setIsInteractionPaused(true)}
-      onMouseLeave={() => setIsInteractionPaused(false)}
-      onFocusCapture={() => setIsInteractionPaused(true)}
-      onBlurCapture={handleBlur}
-      className="py-16 md:py-20 px-4 sm:px-6 md:px-12 bg-white text-[#1d2428] relative overflow-hidden z-20"
+      className="relative z-20 overflow-hidden bg-white px-4 py-16 text-[#1d2428] sm:px-6 md:px-12 md:py-20"
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-11">
-          <span className="text-[10px] font-black uppercase tracking-[0.04em] font-overpass block mb-7">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-11 text-center">
+          <span className="mb-7 block font-overpass text-[10px] font-black uppercase tracking-[0.04em]">
             Customer Reviews
           </span>
-          <h2 className="font-overpass text-2xl md:text-[34px] font-black max-w-xl mx-auto leading-tight text-[#1d2428]">
+          <h2 className="mx-auto max-w-xl font-overpass text-2xl font-black leading-tight md:text-[34px]">
             Hear what people are saying about us
           </h2>
         </div>
 
         <p className="sr-only" aria-live="polite" aria-atomic="true">
-          Testimonial {activeIndex + 1} of {TESTIMONIALS.length}: {TESTIMONIALS[activeIndex].author}
+          Testimonial {selectedIndex + 1} of {TESTIMONIALS.length}: {TESTIMONIALS[selectedIndex].attribution}
         </p>
 
-        <div className="relative w-full max-w-5xl mx-auto flex items-center justify-center">
+        <div className="relative mx-auto w-full max-w-5xl">
           <button
             type="button"
-            onClick={() => moveBy(1)}
+            onClick={scrollLeft}
             aria-label="Move testimonials left"
-            className="absolute left-5 sm:left-8 z-30 w-12 h-12 rounded-full bg-white/90 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-transform duration-200"
+            className="absolute left-5 top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#1d2428] shadow-sm transition-transform duration-200 hover:scale-105 active:scale-95 sm:left-8"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
           <button
             type="button"
-            onClick={() => moveBy(-1)}
+            onClick={scrollRight}
             aria-label="Move testimonials right"
-            className="absolute right-5 sm:right-8 z-30 w-12 h-12 rounded-full bg-white/90 text-[#1d2428] shadow-sm flex items-center justify-center hover:bg-white active:scale-95 transition-transform duration-200"
+            className="absolute right-5 top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#1d2428] shadow-sm transition-transform duration-200 hover:scale-105 active:scale-95 sm:right-8"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
 
-          <div className="w-full overflow-hidden py-5 px-2 select-none">
-            <div
-              data-testid="testimonial-track"
-              onTransitionEnd={handleTransitionEnd}
-              className="relative flex"
-              style={{
-                left: "50%",
-                transform: `translate3d(-${virtualIndex * (dimensions.cardWidth + dimensions.gap) + dimensions.cardWidth / 2}px, 0, 0)`,
-                transition: transitionEnabled && !prefersReducedMotion
-                  ? `transform ${SLIDE_MS}ms ${SLIDE_EASE}`
-                  : "none",
-                width: `${EXTENDED_TESTIMONIALS.length * dimensions.cardWidth + (EXTENDED_TESTIMONIALS.length - 1) * dimensions.gap}px`,
-                gap: `${dimensions.gap}px`,
-                willChange: "transform",
-                backfaceVisibility: "hidden",
-              }}
-            >
-              {EXTENDED_TESTIMONIALS.map((testimonial, index) => {
-                const isActive = getRealIndex(index) === activeIndex;
-                const cardStyle: CSSProperties = {
-                  width: `${dimensions.cardWidth}px`,
-                  backgroundColor: isActive ? "#14aee5" : "#f2b705",
-                  boxShadow: isActive
-                    ? "0 22px 42px rgba(20, 174, 229, 0.18)"
-                    : "0 10px 24px rgba(242, 183, 5, 0.12)",
-                  transform: isActive ? "scale(1)" : "scale(0.94)",
-                  transition: prefersReducedMotion
-                    ? "none"
-                    : `background-color ${SLIDE_MS}ms ${SLIDE_EASE}, box-shadow ${SLIDE_MS}ms ${SLIDE_EASE}, transform ${SLIDE_MS}ms ${SLIDE_EASE}`,
-                };
-
+          <div ref={viewportRef} className="overflow-hidden px-2 py-5" data-testid="testimonial-viewport">
+            <div className="flex touch-pan-y gap-4 sm:gap-6">
+              {TESTIMONIALS.map((testimonial, index) => {
+                const isSelected = index === selectedIndex;
                 return (
                   <article
+                    key={testimonial.attribution}
                     data-testid="testimonial-card"
-                    data-active={isActive ? "true" : "false"}
-                    aria-hidden={index !== virtualIndex}
-                    key={`${testimonial.id}-${index}`}
-                    onClick={() => !isActive && moveTo(index)}
-                    style={cardStyle}
-                    className={`shrink-0 overflow-hidden rounded-lg min-h-[220px] p-7 sm:p-9 flex flex-col justify-center text-center text-[#1d2428] border border-white/30 ${
-                      isActive ? "z-10" : "cursor-pointer"
+                    data-active={isSelected ? "true" : "false"}
+                    aria-hidden={!isSelected}
+                    onClick={() => !isSelected && scrollTo(index)}
+                    className={`flex min-h-[230px] w-[280px] shrink-0 flex-col justify-center overflow-hidden rounded-lg border border-white/30 p-7 text-center text-[#1d2428] will-change-transform sm:w-[520px] sm:p-9 ${
+                      prefersReducedMotion
+                        ? ""
+                        : "transition-[background-color,box-shadow,transform] duration-500 ease-out"
+                    } ${
+                      isSelected
+                        ? "relative z-10 scale-100 bg-brand-cyan shadow-[0_22px_42px_rgba(0,165,236,0.18)]"
+                        : "scale-[0.94] cursor-pointer bg-brand-yellow shadow-[0_10px_24px_rgba(242,183,5,0.12)]"
                     }`}
                   >
                     <div>
-                      <div className="flex gap-1 justify-center mb-5" aria-hidden="true">
+                      <div className="mb-5 flex justify-center gap-1" aria-hidden="true">
                         {[...Array(5)].map((_, starIndex) => (
                           <svg
                             key={starIndex}
-                            style={{
-                              color: isActive ? "#f2b705" : "#14aee5",
-                              fill: isActive ? "#f2b705" : "#14aee5",
-                              transition: prefersReducedMotion ? "none" : `color ${SLIDE_MS}ms ${SLIDE_EASE}, fill ${SLIDE_MS}ms ${SLIDE_EASE}`,
-                            }}
-                            className="w-4 h-4"
+                            className={`h-4 w-4 transition-colors duration-500 ${isSelected ? "fill-brand-yellow text-brand-yellow" : "fill-brand-cyan text-brand-cyan"}`}
                             viewBox="0 0 20 20"
                           >
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                           </svg>
                         ))}
                       </div>
-                      <p className="font-overpass text-sm sm:text-base md:text-lg leading-relaxed font-black text-[#1d2428]">
+                      <p className="font-overpass text-sm font-black leading-relaxed text-[#1d2428] sm:text-base md:text-lg">
                         &ldquo;{testimonial.quote}&rdquo;
                       </p>
                     </div>
                     <div className="mt-5">
-                      <h3 className="font-overpass font-black text-[10px] text-[#1d2428]">{testimonial.author}</h3>
-                      <p className="font-source-sans text-[10px] font-semibold text-[#1d2428]/65">{testimonial.role}</p>
+                      <h3 className="font-overpass text-[10px] font-black text-[#1d2428]">{testimonial.attribution}</h3>
                     </div>
                   </article>
                 );
@@ -278,29 +185,17 @@ export default function Testimonials() {
           </div>
         </div>
 
-        <div className="flex justify-center items-center gap-2.5 mt-5">
+        <div className="mt-5 flex items-center justify-center gap-2.5">
           {TESTIMONIALS.map((testimonial, index) => (
             <button
               type="button"
-              key={testimonial.id}
-              onClick={() => handleDotClick(index)}
-              className={`w-3 h-3 rounded-full transition-colors duration-300 ${index === activeIndex ? "bg-brand-red" : "bg-[#dfe4ea]"}`}
+              key={testimonial.attribution}
+              onClick={() => scrollTo(index)}
+              className={`h-3 w-3 rounded-full transition-colors duration-300 ${index === selectedIndex ? "bg-brand-red" : "bg-[#dfe4ea]"}`}
               aria-label={`Go to testimonial ${index + 1}`}
-              aria-current={index === activeIndex ? "true" : undefined}
+              aria-current={index === selectedIndex ? "true" : undefined}
             />
           ))}
-          <button
-            type="button"
-            onClick={() => setIsUserPaused((paused) => !paused)}
-            className="ml-3 w-8 h-8 rounded-full border border-[#1d2428]/20 flex items-center justify-center text-[#1d2428] hover:bg-brand-pink transition-colors"
-            aria-label={isUserPaused ? "Resume testimonial autoplay" : "Pause testimonial autoplay"}
-          >
-            {isUserPaused ? (
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-            ) : (
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zm8 0h4v14h-4z" /></svg>
-            )}
-          </button>
         </div>
       </div>
     </section>
