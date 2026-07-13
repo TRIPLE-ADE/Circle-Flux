@@ -32,7 +32,7 @@ const localBusinessSchema = {
   name: "CircleFlux Nigeria Limited",
   description: "Producer and distributor of premium purified bottled table water in Ogun State, Nigeria.",
   foundingDate: "2021",
-  email: "circleflux@gmail.com",
+  email: "Circlefluxnigeria@gmail.com",
   telephone: "+2348066560964",
   address: {
     "@type": "PostalAddress",
@@ -91,10 +91,10 @@ export default function WhereToBuyPage() {
                 <div>
                   <h3 className="text-2xl font-black">Email</h3>
                   <a
-                    href="mailto:circleflux@gmail.com"
+                    href="mailto:Circlefluxnigeria@gmail.com"
                     className="inline-block text-lg font-semibold mt-2 underline decoration-brand-cyan/50 underline-offset-4 hover:text-brand-cyan transition-colors"
                   >
-                    circleflux@gmail.com
+                    Circlefluxnigeria@gmail.com
                   </a>
                 </div>
                 <div>
